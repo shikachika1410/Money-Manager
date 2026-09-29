@@ -124,6 +124,22 @@ nav.tabs button.on{color:var(--pri2)}
 .pbar{height:14px;border-radius:99px;background:#fff;overflow:hidden;margin:6px 0}
 .pbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#a9dcef,var(--pri2))}
 .pbar i.over{background:linear-gradient(90deg,#f7b3c1,var(--exp))}
+.hhead{display:flex;align-items:center;gap:8px;padding:10px 4px 6px;font-weight:800}
+.hhead .num{font-size:1.1rem;font-family:Quicksand,sans-serif}
+.hhead .wd{font-size:.66rem;background:var(--soft);color:var(--mut);padding:3px 9px;border-radius:999px;font-weight:700}
+.hhead .wd.sun{background:#fde2e8;color:var(--exp)}
+.hhead .tot{margin-left:auto;display:flex;gap:10px;font-size:.78rem;font-weight:800}
+.hhead .tot .i{color:var(--inc)}.hhead .tot .e{color:var(--exp)}
+.hrow{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line)}
+.hrow .ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.hrow .t{flex:1;min-width:0}
+.hrow .t{display:flex;flex-direction:column}
+.hrow .t small{color:var(--mut);font-size:.68rem;order:1}
+.hrow .t b{display:block;font-size:.9rem;order:2;margin-top:1px}
+.hrow .amt{font-weight:800;font-size:.85rem;white-space:nowrap}
+.hrow .amt.i{color:var(--inc)}.hrow .amt.e{color:var(--exp)}
+.hrow .acts{display:flex;gap:0;margin-left:2px}
+.hrow .acts button{border:0;background:none;font-size:.8rem;padding:3px}
 .hide{display:none}
 </style>
 </head>
@@ -176,13 +192,14 @@ nav.tabs button.on{color:var(--pri2)}
 
 <nav class="tabs" id="tabs">
   <button data-t="cal" class="on"><span>📅</span>Kalender</button>
-  <button data-t="his"><span>🧾</span>Riwayat</button>
   <button id="fab" class="fab">➕</button>
+  <button data-t="his"><span>🧾</span>Riwayat</button>
   <button data-t="rec"><span>📊</span>Rekap</button>
 </nav>
 
 <script>
 const C={exp:[["🍜","F&B"],["🏨","Accommodation"],["🎮","Entertainment"],["🛍️","Shopping"],["🎲","Random Needs"]],inc:[["💼","Gaji"],["🎁","Bonus"],["✨","Lainnya"]]};
+const CBG={"F&B":"#ffe3c9","Accommodation":"#d7e8ff","Entertainment":"#e3d9ff","Shopping":"#ffd9ec","Random Needs":"#d7f5e4","Gaji":"#d7f0ff","Bonus":"#ffe7d1","Lainnya":"#eee7ff"};
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
 const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -328,7 +345,15 @@ function render(){
   $("hf").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{hf=b.dataset.f;render()});
   const hl=mt.filter(x=>hf==="all"||x.type===hf).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
   let hh="",last="";
-  hl.forEach(x=>{if(x.date!==last){last=x.date;hh+=`<div class="dh">${new Date(x.date+"T00:00:00").toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"short"})}</div>`}hh+=row(x)});
+  hl.forEach(x=>{
+    if(x.date!==last){
+      last=x.date;
+      const dd=new Date(x.date+"T00:00:00"),dayTx=mt.filter(t=>t.date===x.date&&(hf==="all"||t.type===hf));
+      const di=sumOf(dayTx,"inc"),de=sumOf(dayTx,"exp");
+      hh+=`<div class="hhead"><span class="num">${dd.getDate()}</span><span class="wd ${dd.getDay()===0?"sun":""}">${dd.toLocaleDateString("id-ID",{weekday:"short"})}</span><span class="tot">${hf!=="exp"?`<span class="i">${rp(di)}</span>`:""}${hf!=="inc"?`<span class="e">${rp(de)}</span>`:""}</span></div>`;
+    }
+    hh+=`<div class="hrow"><span class="ic" style="background:${CBG[x.cat]||"var(--soft)"}">${icon(x.type,x.cat)}</span><div class="t"><small>${x.cat}</small><b>${x.note||(x.spread?"🌊 disebar "+x.spread+" hari":x.fixed?"📌 biaya tetap":x.cat)}</b></div><span class="amt ${x.type}">${rp(x.amt)}</span><span class="acts"><button data-e="${x.id}">✏️</button><button data-x="${x.id}">🗑️</button></span></div>`;
+  });
   $("hist").innerHTML=hh||'<div class="muted">Belum ada riwayat bulan ini 🐚</div>';bindDel($("hist"));
   // recap with budgets
   const totB=C.exp.reduce((s,c)=>s+(budgets[c[1]]||0),0);
