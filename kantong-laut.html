@@ -40,7 +40,10 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .damt{display:flex;justify-content:space-between;align-items:baseline;font-size:.66rem;font-weight:800;margin:2px 0 3px}
 .damt .sp{color:var(--exp)}.damt .sp.z{color:var(--mut);font-weight:700}
 .day .jt{color:var(--pri2);font-weight:800;padding:1px 3px;border-radius:6px;text-decoration:underline dotted;text-underline-offset:2px}
-.day.sel .damt .sp{color:#ffe1e7}
+.pctw{display:flex;justify-content:flex-end}
+.day .pct{font-size:.56rem;color:var(--mut);font-weight:800;margin-top:1px}
+.day .pct.over{color:var(--exp)}
+.day.sel .pct{color:#fff}
 .day.sel .jt{color:#fff;background:rgba(255,255,255,.22)}
 .day .jt.cut{color:var(--exp)}.day.sel .jt.cut{color:#ffe1e7;background:rgba(255,255,255,.3)}
 .dtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:1px}
@@ -187,7 +190,7 @@ function effMap(){
 function baseOf(k){if(set.ov[k]!=null)return set.ov[k];return set.dow[new Date(k+"T00:00:00").getDay()]}
 function allow(y,mo){
   const em=effMap(),o={},n=new Date(y,mo+1,0).getDate();let c=0;
-  for(let d=1;d<=n;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d),b=baseOf(k),sp=em[k]||0,av=b+c,rem=av-sp;o[k]={b,c,av,sp,rem};c=set.roll?rem:Math.min(0,rem)}
+  for(let d=1;d<=n;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d),b=baseOf(k),sp=em[k]||0,av=b+c,rem=av-sp;o[k]={b,c,av,sp,rem};c=Math.min(0,rem)}
   return o;
 }
 let tt;function toast(m){const e=$("toast");e.textContent=m;e.classList.remove("hide");clearTimeout(tt);tt=setTimeout(()=>e.classList.add("hide"),1400)}
@@ -207,6 +210,7 @@ function dayPanel(){
 <div class="budbox"><label class="lb">🎯 Jatah hari ini · ketik lalu Simpan</label>
 <div class="er"><input type="text" inputmode="numeric" id="dj" value="${dot(A.b)}"><button id="djB">Simpan</button></div>
 <div class="jsub">${A.c?`Efektif ${rp(A.av)} (${A.c<0?"dikurangi kelebihan kemarin":"ditambah sisa kemarin"} ${rp(Math.abs(A.c))}) · `:""}Terpakai ${rp(A.sp)} · Sisa <b class="${A.rem<0?"exp":"inc"}">${rp(A.rem)}</b></div>
+${A.rem>0?`<button class="lnk" id="djRoll">💰 Tambahin sisa ${rp(A.rem)} ke jatah besok?</button>`:""}
 <div class="jsub"><button class="lnk" id="djA">Terapkan ke semua ${wn} bulan ini</button>${hasOv?' · <button class="lnk" id="djR">Reset</button>':""}</div>
 ${fx?`<div class="jsub">📌 Biaya tetap bulan ini ${rp(fx)} ≈ ${rp(fx/nd)}/hari, terpisah dari jatah</div>`:""}</div>
 <div class="qbs"><button class="qb e${qa&&qa.type==="exp"?" on":""}" data-q="exp">💸 Pengeluaran</button><button class="qb i${qa&&qa.type==="inc"?" on":""}" data-q="inc">💰 Pemasukan</button></div>
@@ -214,6 +218,10 @@ ${fx?`<div class="jsub">📌 Biaya tetap bulan ini ${rp(fx)} ≈ ${rp(fx/nd)}/ha
   bindMoney($("dj"));$("dx").onclick=closeDay;
   const saveJ=()=>{if($("dj").value==="")return;const v=num($("dj").value);if(v===def)delete set.ov[sel];else set.ov[sel]=v;saveS();toast("Jatah tersimpan ✓");closeDay();render()};
   $("djB").onclick=saveJ;$("dj").onkeydown=e=>{if(e.key==="Enter")saveJ()};
+  if($("djRoll"))$("djRoll").onclick=()=>{
+    const tmS=new Date(sd);tmS.setDate(tmS.getDate()+1);const tmk=iso(tmS),newB=baseOf(tmk)+A.rem;
+    set.ov[tmk]=newB;saveS();toast("Sisa dipindah ke besok ✓");render();
+  };
   $("djA").onclick=()=>{if($("dj").value==="")return;const v=num($("dj").value);
     for(let d=1;d<=nd;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d);if(new Date(k+"T00:00:00").getDay()===sd.getDay()){if(v===def)delete set.ov[k];else set.ov[k]=v}}
     saveS();toast("Berlaku untuk semua "+wn+" ✓");closeDay();render()};
@@ -277,8 +285,8 @@ function render(){
   let h="";const first=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate(),today=iso(new Date()),al=allow(y,mo);
   for(let i=0;i<first;i++)h+='<div class="day empty"></div>';
   for(let d=1;d<=days;d++){
-    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),fxd=tx.some(x=>x.fixed),e=al[k].sp;
-    h+=`<div class="day ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="dtop"><span class="n">${d}</span><span class="qq"><button class="qm" data-act="exp" data-d="${k}">−</button><button class="qp" data-act="inc" data-d="${k}">+</button></span></div><div class="damt"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt ${al[k].av<al[k].b?"cut":""}">${sg(al[k].b)}</span></div><div class="bar2"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div>${i?`<div class="i">+${short(i)}</div>`:""}${fxd?'<div class="i" style="color:var(--pri2)">📌</div>':""}</div>`;
+    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),fxd=tx.some(x=>x.fixed),e=al[k].sp,pc=al[k].b>0?Math.round(e/al[k].b*100):(e>0?100:0);
+    h+=`<div class="day ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="dtop"><span class="n">${d}</span><span class="qq"><button class="qm" data-act="exp" data-d="${k}">−</button><button class="qp" data-act="inc" data-d="${k}">+</button></span></div><div class="damt"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt ${al[k].av<al[k].b?"cut":""}">${sg(al[k].b)}</span></div><div class="bar2"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div><div class="pctw"><span class="pct ${pc>100?"over":""}">${pc}%</span></div>${i?`<div class="i">+${short(i)}</div>`:""}${fxd?'<div class="i" style="color:var(--pri2)">📌</div>':""}</div>`;
   }
   $("cal").innerHTML=h;
   let tj=0,tu=0;Object.values(al).forEach(a=>{tj+=a.b;tu+=a.sp});
