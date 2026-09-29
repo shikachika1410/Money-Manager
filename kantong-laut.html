@@ -363,7 +363,7 @@ function merge(r){
   if((r.sts||0)>meta.sts){budgets=r.budgets||{};set=normSet(r.set);meta.sts=r.sts}
 }
 function gapi(method,body){
-  return fetch(`https://api.github.com/repos/${gh.repo}/contents/${gh.path||"kantong-laut.json"}?_=${Date.now()}`,{method,cache:"no-store",headers:{Authorization:"Bearer "+gh.token,Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
+  return fetch(`https://api.github.com/repos/${gh.repo}/contents/${encodeURIComponent(gh.path||"kantong-laut.json")}?_=${Date.now()}`,{method,cache:"no-store",headers:{Authorization:"Bearer "+gh.token,Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
 }
 let syncing=false,tmr=null;
 function schedSync(){if(!gh.token)return;clearTimeout(tmr);tmr=setTimeout(()=>sync(),1500)}
@@ -392,7 +392,7 @@ $("g_repo").value=gh.repo||"";$("g_path").value=gh.path||"";if(gh.token)$("g_tok
 $("g_save").onclick=()=>{
   const repo=$("g_repo").value.trim(),tok=$("g_tok").value.trim()||gh.token||"";
   if(!/^[^\/\s]+\/[^\/\s]+$/.test(repo)||!tok){alert("Isi repo (format username/nama-repo) dan token dulu ya");return}
-  gh={repo,path:$("g_path").value.trim()||"kantong-laut.json",token:tok};
+  gh={repo,path:($("g_path").value.trim()||"kantong-laut.json").replace(/\s+/g,"-"),token:tok};
   try{localStorage.setItem("kl_gh",JSON.stringify(gh))}catch(e){}
   $("g_tok").value="";$("g_tok").placeholder="tersimpan ✓";sync();
 };
