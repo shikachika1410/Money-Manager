@@ -147,8 +147,6 @@ nav.tabs button.on{color:var(--pri2)}
   <div class="lg">Tap tanggal untuk atur jatah & catat transaksi · angka biru = jatah harian · bar = terpakai vs jatah · 📌 = biaya tetap</div>
   
 </section>
-<section id="p_exp" class="hide"><div class="card"><h3>💸 Catat pengeluaran</h3><div id="f_exp"></div></div><div class="card"><h3>Terakhir dicatat</h3><div id="l_exp"></div></div></section>
-<section id="p_inc" class="hide"><div class="card"><h3>💰 Catat pemasukan</h3><div id="f_inc"></div></div><div class="card"><h3>Terakhir dicatat</h3><div id="l_inc"></div></div></section>
 <section id="p_his" class="hide">
   <div class="card"><div class="cats" id="hf"></div><div id="hist"></div></div>
 </section>
@@ -178,9 +176,8 @@ nav.tabs button.on{color:var(--pri2)}
 
 <nav class="tabs" id="tabs">
   <button data-t="cal" class="on"><span>📅</span>Kalender</button>
-  <button data-t="exp"><span>💸</span>Keluar</button>
-  <button data-t="inc"><span>💰</span>Masuk</button>
   <button data-t="his"><span>🧾</span>Riwayat</button>
+  <button id="fab" class="fab">➕</button>
   <button data-t="rec"><span>📊</span>Rekap</button>
 </nav>
 
@@ -234,6 +231,7 @@ function dayPanel(){
   const A=allow(y,mo)[sel],hasOv=set.ov[sel]!=null,def=set.dow[sd.getDay()],wn=sd.toLocaleDateString("id-ID",{weekday:"long"});
   const fx=sumOf(data.filter(x=>x.date.startsWith(y+"-"+pad(mo+1))&&x.fixed),"exp"),dl=data.filter(x=>x.date===sel);
   $("dpanel").innerHTML=`<div class="ph"><h3>${sd.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}${sel===iso(new Date())?' <span class="tag">hari ini</span>':""}</h3><button class="xb" id="dx">✕</button></div>
+<div class="jsub" style="display:flex;align-items:center;gap:6px;margin:-6px 0 8px"><span>📅</span><input type="date" id="selDate" value="${sel}" style="width:auto;padding:6px 8px;font-size:.8rem;margin:0;border-radius:10px"><button class="lnk" id="selToday" style="margin-left:2px">Hari ini</button></div>
 <div class="budbox"><label class="lb">🎯 Jatah hari ini · ketik lalu Simpan</label>
 <div class="er"><input type="text" inputmode="numeric" id="dj" value="${dot(A.b)}"><button id="djB">Simpan</button></div>
 <div class="pbar"><i class="${A.sp>A.av?"over":""}" style="width:${Math.max(A.av>0?Math.min(A.sp/A.av,1):(A.sp>0?1:0),A.sp>0?.04:0)*100}%"></i></div>
@@ -245,11 +243,13 @@ ${fx?`<div class="jsub">📌 Biaya tetap bulan ini ${rp(fx)} ≈ ${rp(fx/nd)}/ha
 <div class="qbs"><button class="qb e${qa&&qa.type==="exp"?" on":""}" data-q="exp">💸 Pengeluaran</button><button class="qb i${qa&&qa.type==="inc"?" on":""}" data-q="inc">💰 Pemasukan</button></div>
 <div id="qaf"></div><div id="dayList" style="margin-top:8px"></div>`;
   bindMoney($("dj"));$("dx").onclick=closeDay;
+  $("selDate").onchange=e=>{if(!e.target.value)return;sel=e.target.value;view=new Date(sel+"T00:00:00");render()};
+  $("selToday").onclick=()=>{sel=iso(new Date());view=new Date();render()};
   const saveJ=()=>{if($("dj").value==="")return;const v=num($("dj").value);if(v===def)delete set.ov[sel];else set.ov[sel]=v;saveS();toast("Jatah tersimpan ✓");closeDay();render()};
   $("djB").onclick=saveJ;$("dj").onkeydown=e=>{if(e.key==="Enter")saveJ()};
   if($("djRoll"))$("djRoll").onclick=()=>{
-    const tmS=new Date(sd);tmS.setDate(tmS.getDate()+1);const tmk=iso(tmS),newB=baseOf(tmk)+A.rem;
-    set.ov[tmk]=newB;saveS();toast("Sisa dipindah ke besok ✓");render();
+    const tmS=new Date(sd);tmS.setDate(tmS.getDate()+1);const tmk=iso(tmS),newTm=baseOf(tmk)+A.rem;
+    set.ov[sel]=A.sp-A.c;set.ov[tmk]=newTm;saveS();toast("Sisa dipindah ke besok ✓");render();
   };
   $("djA").onclick=()=>{if($("dj").value==="")return;const v=num($("dj").value);
     for(let d=1;d<=nd;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d);if(new Date(k+"T00:00:00").getDay()===sd.getDay()){if(v===def)delete set.ov[k];else set.ov[k]=v}}
@@ -290,21 +290,6 @@ function row(t,withDate){
   return `<div class="row"><span>${icon(t.type,t.cat)}</span><div class="t"><b>${t.cat}</b><small>${d}${t.note||""}${t.spread?" · 🌊 disebar "+t.spread+" hari":""}${t.fixed?" · 📌 tetap":""}</small></div><b class="${t.type}">${t.type==="inc"?"+":"-"}${rp(t.amt)}</b><button data-e="${t.id}">✏️</button><button data-x="${t.id}">🗑️</button></div>`;
 }
 function bindDel(el){el.querySelectorAll("button[data-e]").forEach(b=>b.onclick=()=>editTx(+b.dataset.e));el.querySelectorAll("button[data-x]").forEach(b=>b.onclick=()=>{meta.deleted.push(+b.dataset.x);data=data.filter(x=>x.id!=b.dataset.x);save();render()})}
-function form(t){
-  const el=$("f_"+t);
-  el.innerHTML=`<label class="lb">Kategori</label><div class="cats">${C[t].map(c=>`<button class="chip ${c[1]===fc[t]?"on":""}" data-c="${c[1]}">${c[0]} ${c[1]}</button>`).join("")}</div>
-  <label class="lb">Tanggal</label><input type="date" id="d_${t}" value="${sel}"><label class="lb">Jumlah (Rp)</label><input type="text" inputmode="numeric" id="a_${t}" placeholder="contoh: 50.000"><label class="lb">Catatan</label><input type="text" id="n_${t}" placeholder="opsional, misal: makan siang">${t==="exp"?'<label class="lb">Sebar ke berapa hari? (opsional)</label><input type="number" inputmode="numeric" id="s_exp" placeholder="contoh: 6 (belanja besar dibagi 6 hari)"><label class="chk"><input type="checkbox" id="s_fix" style="width:auto;margin:0"> 📌 Biaya tetap bulanan (kos, dll)</label>':""}
-  <button class="btn ${t==="exp"?"e":"i"}" id="b_${t}">Tambah ✨</button>`;
-  bindMoney($("a_"+t));
-  el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fc[t]=b.dataset.c;keep(t);form(t)});
-  $("d_"+t).onchange=e=>{if(e.target.value){sel=e.target.value;view=new Date(sel+"T00:00:00");render()}};
-  $("b_"+t).onclick=()=>{
-    const a=num($("a_"+t).value);if(!a||a<=0){$("a_"+t).focus();return}
-    data.push({id:Date.now(),u:Date.now(),date:$("d_"+t).value||sel,type:t,cat:fc[t],amt:a,note:$("n_"+t).value.trim(),spread:t==="exp"&&!$("s_fix").checked?Math.max(0,parseInt($("s_exp").value)||0):0,fixed:t==="exp"&&$("s_fix").checked});
-    save();render();
-  };
-}
-function keep(){}
 function render(){
   const m=mk(),y=view.getFullYear(),mo=view.getMonth();
   $("ttl").textContent=view.toLocaleDateString("id-ID",{month:"long",year:"numeric"});
@@ -338,12 +323,6 @@ function render(){
     if(act)setTimeout(()=>{const i=$("qa_a");if(i)i.focus({preventScroll:true})},0);
   });
   dayPanel();
-  // forms + recent
-  ["exp","inc"].forEach(t=>{
-    if(tab===t||!$("f_"+t).innerHTML)form(t);
-    const l=data.filter(x=>x.type===t).sort((a,b)=>b.id-a.id).slice(0,6);
-    $("l_"+t).innerHTML=l.length?l.map(x=>row(x,1)).join(""):'<div class="muted">Belum ada 🐚</div>';bindDel($("l_"+t));
-  });
   // history
   $("hf").innerHTML=[["all","Semua"],["exp","Keluar"],["inc","Masuk"]].map(f=>`<button class="chip ${hf===f[0]?"on":""}" data-f="${f[0]}">${f[1]}</button>`).join("");
   $("hf").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{hf=b.dataset.f;render()});
@@ -365,13 +344,13 @@ function render(){
   $("recap").innerHTML=r;
   $("recap").querySelectorAll("input[data-b]").forEach(i=>{bindMoney(i);i.onchange=()=>{budgets[i.dataset.b]=num(i.value);saveS();render()}});
 }
-document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("#tabs button[data-t]").forEach(b=>b.onclick=()=>{
   tab=b.dataset.t;
-  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
-  ["cal","exp","inc","his","rec"].forEach(t=>$("p_"+t).classList.toggle("hide",t!==tab));
-  if(tab==="exp"||tab==="inc")form(tab);
+  document.querySelectorAll("#tabs button[data-t]").forEach(x=>x.classList.toggle("on",x===b));
+  ["cal","his","rec"].forEach(t=>$("p_"+t).classList.toggle("hide",t!==tab));
   window.scrollTo(0,0);render();
 });
+$("fab").onclick=()=>{sel=iso(new Date());view=new Date();qa=null;render();$("ovl").classList.remove("hide")};
 $("prev").onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()};
 $("next").onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()};
 function setView(v){calView=v;localStorage.setItem("kl_view",v);$("vcal").classList.toggle("on",v==="cal");$("vlist").classList.toggle("on",v==="list");$("calv").classList.toggle("hide",v!=="cal");$("listv").classList.toggle("hide",v!=="list")}
