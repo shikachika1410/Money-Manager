@@ -284,6 +284,7 @@ function qaForm(){
   if(qa.edit&&!tx){qa=null;el.innerHTML="";return}
   if(!C[t].some(c=>c[1]===fc[t]))fc[t]=C[t][0][1];
   el.innerHTML=`<div class="qa ${t}"><label class="lb">${tx?"✏️ Ubah":"Tambah"} ${t==="exp"?"pengeluaran":"pemasukan"}</label><div class="cats">${C[t].map(c=>`<button class="chip ${c[1]===fc[t]?"on":""}" data-c="${c[1]}">${c[0]} ${c[1]}</button>`).join("")}</div>
+${tx?`<label class="lb">Tanggal</label><input type="date" id="qa_d" value="${tx.date}">`:""}
 <input type="text" inputmode="numeric" id="qa_a" placeholder="Jumlah, contoh: 50.000" value="${tx?dot(tx.amt):""}">
 <input type="text" id="qa_n" placeholder="Catatan (opsional)" value="${tx?(tx.note||"").replace(/"/g,"&quot;"):""}">
 ${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:auto;margin:0" ${tx&&tx.fixed?"checked":""}> 📌 Biaya tetap bulanan (kos, dll) · tidak memotong jatah harian</label><div id="qa_sw" class="${tx&&tx.fixed?"hide":""}"><input type="number" inputmode="numeric" id="qa_s" placeholder="Sebar ke berapa hari? (opsional)" value="${tx&&tx.spread||""}"></div>`:""}
@@ -297,8 +298,9 @@ ${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:au
   $("qa_ok").onclick=()=>{
     const a=num($("qa_a").value);if(!a){$("qa_a").focus();return}
     const rec={type:t,cat:fc[t],amt:a,note:$("qa_n").value.trim(),u:Date.now()};
+    if($("qa_d")&&$("qa_d").value)rec.date=$("qa_d").value;
     if(t==="exp"){rec.fixed=$("qa_f").checked;rec.spread=rec.fixed?0:Math.max(0,parseInt($("qa_s").value)||0)}
-    if(tx)Object.assign(tx,rec);else data.push({id:Date.now(),date:sel,...rec});
+    if(tx){Object.assign(tx,rec);if(rec.date){sel=rec.date;view=new Date(sel+"T00:00:00")}}else data.push({id:Date.now(),date:sel,...rec});
     qa=tx?null:{type:t};save();toast(tx?"Diubah ✓":"Ditambahkan ✓");render();
     if(!tx)setTimeout(()=>{const i=$("qa_a");if(i)i.focus({preventScroll:true})},0);
   };
