@@ -180,7 +180,7 @@ const sg=n=>n<0?"-"+short(Math.round(-n)):short(Math.round(n));
 function effMap(){
   const m={};
   data.forEach(t=>{if(t.type!=="exp"||t.fixed)return;
-    if(t.spread>0){for(let i=1;i<=t.spread;i++){const d=new Date(t.date+"T00:00:00");d.setDate(d.getDate()+i);const k=iso(d);m[k]=(m[k]||0)+t.amt/t.spread}}
+    if(t.spread>0){for(let i=0;i<t.spread;i++){const d=new Date(t.date+"T00:00:00");d.setDate(d.getDate()+i);const k=iso(d);m[k]=(m[k]||0)+t.amt/t.spread}}
     else m[t.date]=(m[t.date]||0)+t.amt});
   return m;
 }
@@ -233,6 +233,8 @@ function qaForm(){
 ${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:auto;margin:0" ${tx&&tx.fixed?"checked":""}> 📌 Biaya tetap bulanan (kos, dll) · tidak memotong jatah harian</label><div id="qa_sw" class="${tx&&tx.fixed?"hide":""}"><input type="number" inputmode="numeric" id="qa_s" placeholder="Sebar ke berapa hari? (opsional)" value="${tx&&tx.spread||""}"></div>`:""}
 <div class="er"><button class="btn ${t==="exp"?"e":"i"}" id="qa_ok">${tx?"Simpan perubahan":"Tambah ✨"}</button><button class="btn s" id="qa_x" style="margin-top:0">Batal</button></div></div>`;
   bindMoney($("qa_a"));
+  $("qa_a").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("qa_n").focus()}};
+  $("qa_n").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("qa_ok").click()}};
   el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fc[t]=b.dataset.c;el.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b))});
   if($("qa_f"))$("qa_f").onchange=e=>$("qa_sw").classList.toggle("hide",e.target.checked);
   $("qa_x").onclick=()=>{qa=null;render()};
@@ -241,7 +243,8 @@ ${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:au
     const rec={type:t,cat:fc[t],amt:a,note:$("qa_n").value.trim(),u:Date.now()};
     if(t==="exp"){rec.fixed=$("qa_f").checked;rec.spread=rec.fixed?0:Math.max(0,parseInt($("qa_s").value)||0)}
     if(tx)Object.assign(tx,rec);else data.push({id:Date.now(),date:sel,...rec});
-    qa=null;save();toast(tx?"Diubah ✓":"Ditambahkan ✓");render();
+    qa=tx?null:{type:t};save();toast(tx?"Diubah ✓":"Ditambahkan ✓");render();
+    if(!tx)setTimeout(()=>{const i=$("qa_a");if(i)i.focus({preventScroll:true})},0);
   };
 }
 function pcOf(a){return a.sp>0?(a.av>0?Math.min(a.sp/a.av,1):1):0}
@@ -274,7 +277,7 @@ function render(){
   let h="";const first=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate(),today=iso(new Date()),al=allow(y,mo);
   for(let i=0;i<first;i++)h+='<div class="day empty"></div>';
   for(let d=1;d<=days;d++){
-    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),e=sumOf(tx.filter(x=>!x.fixed),"exp"),fxd=tx.some(x=>x.fixed);
+    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),fxd=tx.some(x=>x.fixed),e=al[k].sp;
     h+=`<div class="day ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="dtop"><span class="n">${d}</span><span class="qq"><button class="qm" data-act="exp" data-d="${k}">−</button><button class="qp" data-act="inc" data-d="${k}">+</button></span></div><div class="damt"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt ${al[k].av<al[k].b?"cut":""}">${sg(al[k].b)}</span></div><div class="bar2"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div>${i?`<div class="i">+${short(i)}</div>`:""}${fxd?'<div class="i" style="color:var(--pri2)">📌</div>':""}</div>`;
   }
   $("cal").innerHTML=h;
