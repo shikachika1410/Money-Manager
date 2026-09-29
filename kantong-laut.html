@@ -16,7 +16,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Trebuchet MS",-apple-system,system-ui,sans-serif;font-size:15px;line-height:1.4;
 background-image:radial-gradient(circle at 0 0,#d6eefa 0,transparent 45%),radial-gradient(circle at 100% 100%,#dcf5f2 0,transparent 45%);background-attachment:fixed}
-.wrap{max-width:720px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 110px}
+.wrap{max-width:860px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 110px}
 header{text-align:center}
 h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight:700;color:#3d7f9e;letter-spacing:.2px}.sub{color:var(--mut);font-size:.82rem;margin:2px 0 12px;font-weight:600}
 .card{background:var(--card);border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(111,183,216,.16)}
@@ -27,23 +27,32 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .sum div{border-radius:16px;padding:9px 4px;text-align:center;background:var(--soft)}
 .sum small{display:block;color:var(--mut);font-size:.68rem}.sum b{font-size:.86rem}
 .inc{color:var(--inc)}.exp{color:var(--exp)}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .dow{text-align:center;font-size:.68rem;color:var(--mut)}
-.day{min-height:80px;border-radius:12px;background:var(--soft);padding:3px 2px;font-size:.56rem;border:2px solid transparent;overflow:hidden}
+.day{min-height:106px;border-radius:14px;background:var(--soft);padding:5px 3px;font-size:.62rem;border:2px solid transparent;overflow:hidden}
 .day.empty{background:none}.day.today{border-color:var(--pri2)}.day.sel{background:var(--pri);color:#fff}
-.day .n{font-weight:800;font-size:.78rem}
-.day .i{color:var(--inc)}.day .e{color:var(--exp)}.day.sel .i,.day.sel .e{color:#fff}
+.day .n{font-weight:800;font-size:.98rem}
+.day .i{color:var(--inc);font-weight:800}.day.sel .i{color:#fff}
 .day div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .day .bar2{height:6px;border-radius:9px;background:rgba(255,255,255,.75);overflow:hidden;margin-top:3px}
 .day .bar2 i{display:block;height:100%;background:#f6b4c2;border-radius:9px}
 .day .bar2 i.over{background:#e5566f}
-.day .jt{color:var(--mut);font-size:.54rem;text-align:center;margin-top:1px}
-.day.sel .jt{color:#fff}
+.damt{display:flex;justify-content:space-between;align-items:baseline;font-size:.66rem;font-weight:800;margin:2px 0 3px}
+.damt .sp{color:var(--exp)}.damt .sp.z{color:var(--mut);font-weight:700}
+.day .jt{color:var(--pri2);font-weight:800;padding:1px 3px;border-radius:6px;text-decoration:underline dotted;text-underline-offset:2px}
+.day.sel .damt .sp{color:#ffe1e7}
+.day.sel .jt{color:#fff;background:rgba(255,255,255,.22)}
+.day .jt.cut{color:var(--exp)}.day.sel .jt.cut{color:#ffe1e7;background:rgba(255,255,255,.3)}
+.dtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:1px}
+.qq{display:flex;gap:3px}
+.qq button{width:20px;height:20px;border-radius:50%;border:0;font-weight:900;font-size:.85rem;line-height:1;color:#fff;padding:0}
+.qq .qm{background:var(--exp)}.qq .qp{background:var(--inc)}
+.day.sel .qq button{opacity:.9}
 .dbox{background:var(--soft);border-radius:16px;padding:12px;margin-bottom:10px;font-size:.92rem}
 .jrow{display:flex;justify-content:space-between;align-items:baseline;padding:2px 0}.jsub{color:var(--mut);font-size:.78rem;margin-bottom:6px}
 .edit{border-top:2px dashed #cbe4ef;margin-top:8px;padding-top:6px}.er{display:flex;gap:6px}.er input{margin:0;flex:1}
 .dbox .big{font-size:1.25rem}
-.dbox button,.sheet button{border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}.dbox button.g,.sheet button.g{background:#fff;color:var(--ink)}
+.dbox button{border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}.dbox button.g{background:#fff;color:var(--ink)}
 .card.calc{padding:12px 8px}
 .lg{font-size:.7rem;color:var(--mut);text-align:center;margin:-4px 0 12px}
 .lb{font-size:.78rem;font-weight:800;color:var(--mut);display:block;margin:6px 0 3px}.hint{font-size:.8rem;color:var(--mut);margin-bottom:6px}.dg{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.dg input{margin-bottom:4px}
@@ -71,29 +80,42 @@ nav.tabs button{flex:1;border:0;background:none;color:var(--mut);font:inherit;fo
 nav.tabs button span{display:block;font-size:1.25rem}
 nav.tabs button.on{color:var(--pri2)}
 .ovl{position:fixed;inset:0;background:rgba(61,127,158,.35);z-index:20;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:#fff;width:100%;max-width:720px;border-radius:26px 26px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.15)}
-.sheet input{font-size:1.4rem;font-weight:800;text-align:center;font-family:Quicksand,Nunito,sans-serif}
+.sheet{background:#fff;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.15)}
+#dj{font-size:1.4rem;font-weight:800;text-align:center;font-family:Quicksand,Nunito,sans-serif}
 .er button{flex:1;height:44px}.sheet .er{margin-top:8px}
+.calhead{display:flex;justify-content:flex-end;margin:0 4px 8px}.calhead button{border:0;background:var(--soft);color:var(--pri2);font:inherit;font-weight:800;border-radius:999px;padding:7px 15px}
+.tag{font-family:Nunito,sans-serif;font-size:.68rem;background:var(--pri);color:#fff;border-radius:999px;padding:2px 9px;vertical-align:middle}
+.budbox{background:linear-gradient(135deg,#eaf7fc,#dcf0fa);border:2px solid #cfe9f5;border-radius:18px;padding:12px;margin-bottom:10px}
+.qbs{display:flex;gap:8px;margin:10px 0}.qb{flex:1;height:50px;border:0;border-radius:18px;font:inherit;font-weight:800;color:#fff;font-size:.95rem}
+.qb.e{background:linear-gradient(135deg,#f7c9d3,var(--exp))}.qb.i{background:linear-gradient(135deg,#a9e2cc,var(--inc))}.qb.on{transform:scale(1.03);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.qa{border-radius:18px;padding:12px;margin-bottom:6px;border:2px solid var(--line)}.qa input{background:#fff}
+.qa.exp{background:#fef0f3;border-color:#f9d3dc}.qa.inc{background:#eefaf4;border-color:#c9ecdc}
+.chk{display:flex;gap:8px;align-items:center;font-size:.85rem;font-weight:700;margin:4px 0 8px}
+.lnk{border:0;background:none;color:var(--pri2);font:inherit;font-size:.8rem;font-weight:800;padding:0;text-decoration:underline}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:#3d7f9e;color:#fff;padding:9px 16px;border-radius:999px;font-weight:700;z-index:30;font-size:.85rem}
+#dpanel .er button:not(.btn){border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}
+#djB{flex:0 0 100px!important}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ph h3{margin:0}.xb{border:0;background:var(--soft);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:1rem}
 .hide{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1>🐳 Kantong Laut</h1><div class="sub">catat uang harian, santai aja 🌊</div></header>
+<header><h1>🐳 Kantong Laut</h1><div class="sub">catat uang harian, santai aja 🌊<span id="cs"></span></div></header>
 <div class="card">
   <div class="nav"><button id="prev">‹</button><b id="ttl"></b><button id="next">›</button></div>
   <div class="sum">
     <div><small>Pemasukan</small><b class="inc" id="sI"></b></div>
     <div><small>Pengeluaran</small><b class="exp" id="sE"></b></div>
-    <div><small>Saldo</small><b id="sB"></b></div>
+    <div><small>Sisa budget</small><b id="sB"></b></div>
   </div>
   <div id="jt" style="margin-top:12px"></div>
 </div>
 
 <section id="p_cal">
-  <div class="card calc"><div class="grid" id="dows"></div><div class="grid" id="cal" style="margin-top:4px"></div></div>
-  <div class="lg">Tap tanggal lalu ketik jatahnya · angka kecil = jatah hari itu · bar = pengeluaran vs jatah</div>
-  <div class="card"><h3 id="dayTtl"></h3><div class="dbox" id="dbox"></div><div id="dayList"></div></div>
+  <div class="card calc"><div class="calhead"><button id="today">📍 Hari ini</button></div><div class="grid" id="dows"></div><div class="grid" id="cal" style="margin-top:4px"></div></div>
+  <div class="lg">Tap tanggal untuk atur jatah & catat transaksi · angka biru = jatah harian · bar = terpakai vs jatah · 📌 = biaya tetap</div>
+  
 </section>
 <section id="p_exp" class="hide"><div class="card"><h3>💸 Catat pengeluaran</h3><div id="f_exp"></div></div><div class="card"><h3>Terakhir dicatat</h3><div id="l_exp"></div></div></section>
 <section id="p_inc" class="hide"><div class="card"><h3>💰 Catat pemasukan</h3><div id="f_inc"></div></div><div class="card"><h3>Terakhir dicatat</h3><div id="l_inc"></div></div></section>
@@ -101,11 +123,17 @@ nav.tabs button.on{color:var(--pri2)}
   <div class="card"><div class="cats" id="hf"></div><div id="hist"></div></div>
 </section>
 <section id="p_rec" class="hide">
-  <div class="card set"><h3>⚙️ Pengaturan jatah</h3>
-    <div class="hint">Jatah awal: Sen–Jum 100.000 dan Sab–Min 200.000. Untuk mengubah, tap tanggal di Kalender lalu ketik jatahnya.</div>
-    <label style="display:flex;gap:8px;align-items:center;font-weight:600;margin:4px 0 8px"><input type="checkbox" id="s_roll" style="width:auto;margin:0"> Bawa sisa hemat ke hari berikutnya</label>
-    <div class="muted" style="padding:0;text-align:left">Kelebihan pengeluaran otomatis mengurangi jatah hari berikutnya. Kalau opsi di atas aktif, sisa hemat juga ditambahkan. Reset tiap awal bulan.</div></div>
+  <div class="card"><h3>📌 Biaya tetap bulan ini</h3><div id="fixed"></div></div>
   <div class="card"><h3>📊 Budget vs terpakai</h3><div id="recap"></div></div>
+  <div class="card"><h3>☁️ Sync GitHub</h3>
+    <div class="hint" id="ghst"></div>
+    <label class="lb">Repo data (harus PRIVATE)</label><input type="text" id="g_repo" placeholder="username/kantong-laut-data" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <label class="lb">Nama file</label><input type="text" id="g_path" placeholder="kantong-laut.json" autocapitalize="off" autocorrect="off">
+    <label class="lb">Token (Contents: read & write)</label><input type="password" id="g_tok" placeholder="github_pat_..." autocapitalize="off" autocorrect="off">
+    <button class="btn i" id="g_save">Simpan & sambungkan</button>
+    <button class="btn s" id="g_now">Sync sekarang</button>
+    <button class="btn s" id="g_off">Putuskan koneksi</button>
+    <div class="hint" style="margin-top:8px">Data otomatis di-pull saat app dibuka dan di-push tiap ada perubahan. Token cuma disimpan di perangkat ini, jadi isi sekali di HP dan sekali di laptop.</div></div>
   <div class="card"><h3>💾 Backup data</h3>
     <div class="muted" style="padding:0 0 6px;text-align:left">Simpan file backup sesekali biar data aman kalau ganti HP.</div>
     <button class="btn s" id="exp">Export backup</button>
@@ -115,7 +143,8 @@ nav.tabs button.on{color:var(--pri2)}
 </section>
 </div>
 
-<div id="ovl" class="ovl hide"><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="toast hide"></div>
+<div id="ovl" class="ovl hide"><div class="sheet" id="dpanel"></div></div>
 
 <nav class="tabs" id="tabs">
   <button data-t="cal" class="on"><span>📅</span>Kalender</button>
@@ -135,10 +164,14 @@ const dot=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,".");
 function bindMoney(el){if(el)el.addEventListener("input",()=>{const n=num(el.value);el.value=n?dot(n):""})}
 function normSet(sv){const d={dow:[200000,100000,100000,100000,100000,100000,200000],ov:{},roll:false};if(sv&&sv.wd!=null&&!sv.dow)sv.dow=[sv.we,sv.wd,sv.wd,sv.wd,sv.wd,sv.wd,sv.we];return Object.assign(d,sv||{})}
 const rp=n=>(n<0?"-":"")+"Rp"+dot(Math.abs(n));
-const short=n=>n>=1e6?(n/1e6).toFixed(1).replace(".0","").replace(".",",")+"jt":dot(n);
-let set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"};
+const short=n=>n>=1e6?(n/1e6).toFixed(1).replace(".0","").replace(".",",")+"jt":n>=1e3?(Math.round(n/1000*10)/10+"").replace(".0","").replace(".",",")+"k":""+n;
+let qa=null,set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"};
 try{data=JSON.parse(localStorage.getItem("kl_data")||"[]");budgets=JSON.parse(localStorage.getItem("kl_budget")||"{}");set=normSet(JSON.parse(localStorage.getItem("kl_set")||"{}"))}catch(e){}
-function save(){try{localStorage.setItem("kl_data",JSON.stringify(data));localStorage.setItem("kl_budget",JSON.stringify(budgets));localStorage.setItem("kl_set",JSON.stringify(set))}catch(e){}}
+let gh={},meta={sts:0,deleted:[]};
+try{gh=JSON.parse(localStorage.getItem("kl_gh")||"{}");meta=Object.assign(meta,JSON.parse(localStorage.getItem("kl_meta")||"{}"))}catch(e){}
+function saveLocal(){try{localStorage.setItem("kl_data",JSON.stringify(data));localStorage.setItem("kl_budget",JSON.stringify(budgets));localStorage.setItem("kl_set",JSON.stringify(set));localStorage.setItem("kl_meta",JSON.stringify(meta))}catch(e){}}
+function save(){saveLocal();schedSync()}
+function saveS(){meta.sts=Date.now();save()}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 const mk=()=>view.getFullYear()+"-"+pad(view.getMonth()+1);
 const sumOf=(a,t)=>a.filter(x=>x.type===t).reduce((s,x)=>s+x.amt,0);
@@ -146,7 +179,7 @@ const icon=(t,c)=>(C[t].find(x=>x[1]===c)||["•"])[0];
 const sg=n=>n<0?"-"+short(Math.round(-n)):short(Math.round(n));
 function effMap(){
   const m={};
-  data.forEach(t=>{if(t.type!=="exp")return;
+  data.forEach(t=>{if(t.type!=="exp"||t.fixed)return;
     if(t.spread>0){for(let i=1;i<=t.spread;i++){const d=new Date(t.date+"T00:00:00");d.setDate(d.getDate()+i);const k=iso(d);m[k]=(m[k]||0)+t.amt/t.spread}}
     else m[t.date]=(m[t.date]||0)+t.amt});
   return m;
@@ -157,45 +190,77 @@ function allow(y,mo){
   for(let d=1;d<=n;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d),b=baseOf(k),sp=em[k]||0,av=b+c,rem=av-sp;o[k]={b,c,av,sp,rem};c=set.roll?rem:Math.min(0,rem)}
   return o;
 }
-function closeSheet(){$("ovl").classList.add("hide")}
-function openSheet(){
-  const sd=new Date(sel+"T00:00:00"),A=allow(sd.getFullYear(),sd.getMonth())[sel],hasOv=set.ov[sel]!=null;
-  const wn=sd.toLocaleDateString("id-ID",{weekday:"long"});
-  $("sheet").innerHTML=`<h3>🎯 Jatah ${sd.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}</h3>
-<label class="lb">Ketik jatah tanggal ini (Rp)</label>
-<input type="text" inputmode="numeric" id="ov" placeholder="contoh: 150.000" value="${dot(A.b)}">
-<div class="jsub">${A.c?`Jatah efektif ${rp(A.av)} (${A.c<0?"dikurangi kelebihan kemarin":"ditambah sisa kemarin"} ${rp(Math.abs(A.c))})`:`Jatah efektif ${rp(A.av)}`} · Terpakai ${rp(A.sp)} · Sisa <b class="${A.rem<0?"exp":"inc"}">${rp(A.rem)}</b></div>
-<div class="er"><button id="ovB">Simpan</button>${hasOv?'<button class="g" id="ovR">Reset</button>':""}<button class="g" id="ovX">Tutup</button></div>
-<div class="er"><button class="g" id="ovA" style="font-size:.85rem">Terapkan ke semua ${wn} bulan ini</button></div>`;
-  bindMoney($("ov"));
-  const def=set.dow[sd.getDay()];
-  $("ovB").onclick=()=>{if($("ov").value==="")return;const v=num($("ov").value);if(v===def)delete set.ov[sel];else set.ov[sel]=v;save();closeSheet();render()};
-  $("ov").onkeydown=e=>{if(e.key==="Enter")$("ovB").click()};
-  if($("ovR"))$("ovR").onclick=()=>{delete set.ov[sel];save();closeSheet();render()};
-  $("ovX").onclick=closeSheet;
-  $("ovA").onclick=()=>{if($("ov").value==="")return;const v=num($("ov").value),y=sd.getFullYear(),mo=sd.getMonth(),n=new Date(y,mo+1,0).getDate();
-    for(let d=1;d<=n;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d);if(new Date(k+"T00:00:00").getDay()===sd.getDay()){if(v===def)delete set.ov[k];else set.ov[k]=v}}
-    save();closeSheet();render()};
-  $("ovl").classList.remove("hide");$("ov").focus();$("ov").select();
+let tt;function toast(m){const e=$("toast");e.textContent=m;e.classList.remove("hide");clearTimeout(tt);tt=setTimeout(()=>e.classList.add("hide"),1400)}
+function closeDay(){qa=null;$("ovl").classList.add("hide")}
+$("ovl").onclick=e=>{if(e.target===$("ovl"))closeDay()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDay()});
+function editTx(id){
+  const t=data.find(x=>x.id===id);if(!t)return;
+  sel=t.date;view=new Date(sel+"T00:00:00");fc[t.type]=t.cat;qa={type:t.type,edit:id};
+  render();$("ovl").classList.remove("hide");
 }
-$("ovl").onclick=e=>{if(e.target===$("ovl"))closeSheet()};
+function dayPanel(){
+  const sd=new Date(sel+"T00:00:00"),y=sd.getFullYear(),mo=sd.getMonth(),nd=new Date(y,mo+1,0).getDate();
+  const A=allow(y,mo)[sel],hasOv=set.ov[sel]!=null,def=set.dow[sd.getDay()],wn=sd.toLocaleDateString("id-ID",{weekday:"long"});
+  const fx=sumOf(data.filter(x=>x.date.startsWith(y+"-"+pad(mo+1))&&x.fixed),"exp"),dl=data.filter(x=>x.date===sel);
+  $("dpanel").innerHTML=`<div class="ph"><h3>${sd.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}${sel===iso(new Date())?' <span class="tag">hari ini</span>':""}</h3><button class="xb" id="dx">✕</button></div>
+<div class="budbox"><label class="lb">🎯 Jatah hari ini · ketik lalu Simpan</label>
+<div class="er"><input type="text" inputmode="numeric" id="dj" value="${dot(A.b)}"><button id="djB">Simpan</button></div>
+<div class="jsub">${A.c?`Efektif ${rp(A.av)} (${A.c<0?"dikurangi kelebihan kemarin":"ditambah sisa kemarin"} ${rp(Math.abs(A.c))}) · `:""}Terpakai ${rp(A.sp)} · Sisa <b class="${A.rem<0?"exp":"inc"}">${rp(A.rem)}</b></div>
+<div class="jsub"><button class="lnk" id="djA">Terapkan ke semua ${wn} bulan ini</button>${hasOv?' · <button class="lnk" id="djR">Reset</button>':""}</div>
+${fx?`<div class="jsub">📌 Biaya tetap bulan ini ${rp(fx)} ≈ ${rp(fx/nd)}/hari, terpisah dari jatah</div>`:""}</div>
+<div class="qbs"><button class="qb e${qa&&qa.type==="exp"?" on":""}" data-q="exp">💸 Pengeluaran</button><button class="qb i${qa&&qa.type==="inc"?" on":""}" data-q="inc">💰 Pemasukan</button></div>
+<div id="qaf"></div><div id="dayList" style="margin-top:8px"></div>`;
+  bindMoney($("dj"));$("dx").onclick=closeDay;
+  const saveJ=()=>{if($("dj").value==="")return;const v=num($("dj").value);if(v===def)delete set.ov[sel];else set.ov[sel]=v;saveS();toast("Jatah tersimpan ✓");closeDay();render()};
+  $("djB").onclick=saveJ;$("dj").onkeydown=e=>{if(e.key==="Enter")saveJ()};
+  $("djA").onclick=()=>{if($("dj").value==="")return;const v=num($("dj").value);
+    for(let d=1;d<=nd;d++){const k=y+"-"+pad(mo+1)+"-"+pad(d);if(new Date(k+"T00:00:00").getDay()===sd.getDay()){if(v===def)delete set.ov[k];else set.ov[k]=v}}
+    saveS();toast("Berlaku untuk semua "+wn+" ✓");closeDay();render()};
+  if($("djR"))$("djR").onclick=()=>{delete set.ov[sel];saveS();closeDay();render()};
+  $("dpanel").querySelectorAll(".qb").forEach(b=>b.onclick=()=>{qa=(qa&&!qa.edit&&qa.type===b.dataset.q)?null:{type:b.dataset.q};render()});
+  $("dayList").innerHTML=dl.length?dl.map(x=>row(x)).join(""):'<div class="muted">Belum ada catatan 🐚</div>';bindDel($("dayList"));
+  qaForm();
+}
+function qaForm(){
+  const el=$("qaf");if(!qa){el.innerHTML="";return}
+  const t=qa.type,tx=qa.edit?data.find(x=>x.id===qa.edit):null;
+  if(qa.edit&&!tx){qa=null;el.innerHTML="";return}
+  if(!C[t].some(c=>c[1]===fc[t]))fc[t]=C[t][0][1];
+  el.innerHTML=`<div class="qa ${t}"><label class="lb">${tx?"✏️ Ubah":"Tambah"} ${t==="exp"?"pengeluaran":"pemasukan"}</label><div class="cats">${C[t].map(c=>`<button class="chip ${c[1]===fc[t]?"on":""}" data-c="${c[1]}">${c[0]} ${c[1]}</button>`).join("")}</div>
+<input type="text" inputmode="numeric" id="qa_a" placeholder="Jumlah, contoh: 50.000" value="${tx?dot(tx.amt):""}">
+<input type="text" id="qa_n" placeholder="Catatan (opsional)" value="${tx?(tx.note||"").replace(/"/g,"&quot;"):""}">
+${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:auto;margin:0" ${tx&&tx.fixed?"checked":""}> 📌 Biaya tetap bulanan (kos, dll) · tidak memotong jatah harian</label><div id="qa_sw" class="${tx&&tx.fixed?"hide":""}"><input type="number" inputmode="numeric" id="qa_s" placeholder="Sebar ke berapa hari? (opsional)" value="${tx&&tx.spread||""}"></div>`:""}
+<div class="er"><button class="btn ${t==="exp"?"e":"i"}" id="qa_ok">${tx?"Simpan perubahan":"Tambah ✨"}</button><button class="btn s" id="qa_x" style="margin-top:0">Batal</button></div></div>`;
+  bindMoney($("qa_a"));
+  el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fc[t]=b.dataset.c;el.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b))});
+  if($("qa_f"))$("qa_f").onchange=e=>$("qa_sw").classList.toggle("hide",e.target.checked);
+  $("qa_x").onclick=()=>{qa=null;render()};
+  $("qa_ok").onclick=()=>{
+    const a=num($("qa_a").value);if(!a){$("qa_a").focus();return}
+    const rec={type:t,cat:fc[t],amt:a,note:$("qa_n").value.trim(),u:Date.now()};
+    if(t==="exp"){rec.fixed=$("qa_f").checked;rec.spread=rec.fixed?0:Math.max(0,parseInt($("qa_s").value)||0)}
+    if(tx)Object.assign(tx,rec);else data.push({id:Date.now(),date:sel,...rec});
+    qa=null;save();toast(tx?"Diubah ✓":"Ditambahkan ✓");render();
+  };
+}
 function pcOf(a){return a.sp>0?(a.av>0?Math.min(a.sp/a.av,1):1):0}
 function row(t,withDate){
   const d=withDate?new Date(t.date+"T00:00:00").toLocaleDateString("id-ID",{day:"numeric",month:"short"})+" · ":"";
-  return `<div class="row"><span>${icon(t.type,t.cat)}</span><div class="t"><b>${t.cat}</b><small>${d}${t.note||""}${t.spread?" · 🌊 disebar "+t.spread+" hari":""}</small></div><b class="${t.type}">${t.type==="inc"?"+":"-"}${rp(t.amt)}</b><button data-x="${t.id}">🗑️</button></div>`;
+  return `<div class="row"><span>${icon(t.type,t.cat)}</span><div class="t"><b>${t.cat}</b><small>${d}${t.note||""}${t.spread?" · 🌊 disebar "+t.spread+" hari":""}${t.fixed?" · 📌 tetap":""}</small></div><b class="${t.type}">${t.type==="inc"?"+":"-"}${rp(t.amt)}</b><button data-e="${t.id}">✏️</button><button data-x="${t.id}">🗑️</button></div>`;
 }
-function bindDel(el){el.querySelectorAll("button[data-x]").forEach(b=>b.onclick=()=>{data=data.filter(x=>x.id!=b.dataset.x);save();render()})}
+function bindDel(el){el.querySelectorAll("button[data-e]").forEach(b=>b.onclick=()=>editTx(+b.dataset.e));el.querySelectorAll("button[data-x]").forEach(b=>b.onclick=()=>{meta.deleted.push(+b.dataset.x);data=data.filter(x=>x.id!=b.dataset.x);save();render()})}
 function form(t){
   const el=$("f_"+t);
   el.innerHTML=`<label class="lb">Kategori</label><div class="cats">${C[t].map(c=>`<button class="chip ${c[1]===fc[t]?"on":""}" data-c="${c[1]}">${c[0]} ${c[1]}</button>`).join("")}</div>
-  <label class="lb">Tanggal</label><input type="date" id="d_${t}" value="${sel}"><label class="lb">Jumlah (Rp)</label><input type="text" inputmode="numeric" id="a_${t}" placeholder="contoh: 50.000"><label class="lb">Catatan</label><input type="text" id="n_${t}" placeholder="opsional, misal: makan siang">${t==="exp"?'<label class="lb">Sebar ke berapa hari? (opsional)</label><input type="number" inputmode="numeric" id="s_exp" placeholder="contoh: 6 (belanja besar dibagi 6 hari)">':""}
+  <label class="lb">Tanggal</label><input type="date" id="d_${t}" value="${sel}"><label class="lb">Jumlah (Rp)</label><input type="text" inputmode="numeric" id="a_${t}" placeholder="contoh: 50.000"><label class="lb">Catatan</label><input type="text" id="n_${t}" placeholder="opsional, misal: makan siang">${t==="exp"?'<label class="lb">Sebar ke berapa hari? (opsional)</label><input type="number" inputmode="numeric" id="s_exp" placeholder="contoh: 6 (belanja besar dibagi 6 hari)"><label class="chk"><input type="checkbox" id="s_fix" style="width:auto;margin:0"> 📌 Biaya tetap bulanan (kos, dll)</label>':""}
   <button class="btn ${t==="exp"?"e":"i"}" id="b_${t}">Tambah ✨</button>`;
   bindMoney($("a_"+t));
   el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fc[t]=b.dataset.c;keep(t);form(t)});
   $("d_"+t).onchange=e=>{if(e.target.value){sel=e.target.value;view=new Date(sel+"T00:00:00");render()}};
   $("b_"+t).onclick=()=>{
     const a=num($("a_"+t).value);if(!a||a<=0){$("a_"+t).focus();return}
-    data.push({id:Date.now(),date:$("d_"+t).value||sel,type:t,cat:fc[t],amt:a,note:$("n_"+t).value.trim(),spread:t==="exp"?Math.max(0,parseInt($("s_exp").value)||0):0});
+    data.push({id:Date.now(),u:Date.now(),date:$("d_"+t).value||sel,type:t,cat:fc[t],amt:a,note:$("n_"+t).value.trim(),spread:t==="exp"&&!$("s_fix").checked?Math.max(0,parseInt($("s_exp").value)||0):0,fixed:t==="exp"&&$("s_fix").checked});
     save();render();
   };
 }
@@ -204,28 +269,27 @@ function render(){
   const m=mk(),y=view.getFullYear(),mo=view.getMonth();
   $("ttl").textContent=view.toLocaleDateString("id-ID",{month:"long",year:"numeric"});
   const mt=data.filter(x=>x.date.startsWith(m)),I=sumOf(mt,"inc"),E=sumOf(mt,"exp");
-  $("sI").textContent=rp(I);$("sE").textContent=rp(E);$("sB").textContent=rp(I-E);$("sB").className=I-E<0?"exp":"inc";
+  $("sI").textContent=rp(I);$("sE").textContent=rp(E);
   // calendar
   let h="";const first=new Date(y,mo,1).getDay(),days=new Date(y,mo+1,0).getDate(),today=iso(new Date()),al=allow(y,mo);
   for(let i=0;i<first;i++)h+='<div class="day empty"></div>';
   for(let d=1;d<=days;d++){
-    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),e=sumOf(tx,"exp");
-    h+=`<div class="day ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="n">${d}</div>${i?`<div class="i">+${short(i)}</div>`:""}${e?`<div class="e">-${short(e)}</div>`:""}<div class="bar2"><i class="${al[k].sp>al[k].av?"over":""}" style="width:${pcOf(al[k])*100}%"></i></div><div class="jt">${sg(al[k].av)}</div></div>`;
+    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),e=sumOf(tx.filter(x=>!x.fixed),"exp"),fxd=tx.some(x=>x.fixed);
+    h+=`<div class="day ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="dtop"><span class="n">${d}</span><span class="qq"><button class="qm" data-act="exp" data-d="${k}">−</button><button class="qp" data-act="inc" data-d="${k}">+</button></span></div><div class="damt"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt ${al[k].av<al[k].b?"cut":""}">${sg(al[k].b)}</span></div><div class="bar2"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div>${i?`<div class="i">+${short(i)}</div>`:""}${fxd?'<div class="i" style="color:var(--pri2)">📌</div>':""}</div>`;
   }
   $("cal").innerHTML=h;
   let tj=0,tu=0;Object.values(al).forEach(a=>{tj+=a.b;tu+=a.sp});
-  $("jt").innerHTML=`<div style="display:flex;justify-content:space-between;font-size:.82rem"><span>🎯 Total jatah bulan ini</span><b>${rp(tj)}</b></div><div class="bar"><i class="${tu>tj?"over":tj&&tu/tj>.8?"warn":""}" style="width:${tj?Math.min(tu/tj,1)*100:0}%"></i></div><div style="font-size:.74rem;color:var(--mut)">Terpakai ${rp(tu)} · Sisa <b class="${tj-tu<0?"exp":"inc"}">${rp(tj-tu)}</b></div>`;
-  $("cal").querySelectorAll(".day[data-d]").forEach(el=>el.onclick=()=>{sel=el.dataset.d;render();openSheet()});
-  const dl=data.filter(x=>x.date===sel);
-  $("dayTtl").textContent=new Date(sel+"T00:00:00").toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"});
-  $("dayList").innerHTML=dl.length?dl.map(x=>row(x)).join(""):'<div class="muted">Belum ada catatan 🐚</div>';bindDel($("dayList"));
-  const sd=new Date(sel+"T00:00:00"),A=allow(sd.getFullYear(),sd.getMonth())[sel],hasOv=set.ov[sel]!=null;
-  $("dbox").innerHTML=`<div class="jrow"><span>🎯 Jatah hari ini</span><b class="big">${rp(A.av)}</b></div>
-<div class="jsub">Dasar ${rp(A.b)}${hasOv?" (diatur khusus)":""}${A.c?` ${A.c<0?"− kelebihan kemarin":"+ sisa kemarin"} ${rp(Math.abs(A.c))}`:""}</div>
-<div class="jrow"><span>Terpakai</span><b>${rp(A.sp)}</b></div>
-<div class="jrow"><span>Sisa</span><b class="${A.rem<0?"exp":"inc"}">${rp(A.rem)}</b></div>${A.rem<0?'<div class="jsub">Besok jatahnya otomatis berkurang 🥲</div>':""}
-<button id="ovE" style="margin-top:8px;width:100%;height:42px">✏️ Ubah jatah tanggal ini</button>`;
-  $("ovE").onclick=openSheet;
+  const fxT=sumOf(mt.filter(x=>x.fixed),"exp"),fxl=mt.filter(x=>x.type==="exp"&&x.fixed);
+  $("sB").textContent=rp(tj-tu);$("sB").className=tj-tu<0?"exp":"inc";
+  $("fixed").innerHTML=fxl.length?`<div class="jsub" style="margin-bottom:6px">Total ${rp(fxT)} ≈ ${rp(fxT/days)}/hari · terpisah dari jatah harian</div>`+fxl.map(x=>row(x,1)).join(""):'<div class="muted">Belum ada. Saat catat pengeluaran, centang "📌 Biaya tetap" (misal kos).</div>';bindDel($("fixed"));
+  $("jt").innerHTML=`<div style="display:flex;justify-content:space-between;font-size:.82rem"><span>🎯 Total jatah bulan ini</span><b>${rp(tj)}</b></div><div class="bar"><i class="${tu>tj?"over":tj&&tu/tj>.8?"warn":""}" style="width:${tj?Math.min(tu/tj,1)*100:0}%"></i></div><div style="font-size:.74rem;color:var(--mut)">Terpakai ${rp(tu)} · Sisa <b class="${tj-tu<0?"exp":"inc"}">${rp(tj-tu)}</b></div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">${fxT?`📌 Biaya tetap ${rp(fxT)} (≈ ${rp(fxT/days)}/hari) · `:""}Saldo masuk−keluar ${rp(I-E)}</div>`;
+  $("cal").querySelectorAll(".day[data-d]").forEach(el=>el.onclick=ev=>{
+    const act=ev.target.dataset.act,editJ=ev.target.classList.contains("jt");
+    sel=el.dataset.d;qa=act?{type:act}:null;render();$("ovl").classList.remove("hide");
+    if(editJ){const i=$("dj");i.focus();i.select()}
+    if(act)setTimeout(()=>{const i=$("qa_a");if(i)i.focus({preventScroll:true})},0);
+  });
+  dayPanel();
   // forms + recent
   ["exp","inc"].forEach(t=>{
     if(tab===t||!$("f_"+t).innerHTML)form(t);
@@ -251,7 +315,7 @@ function render(){
   const p=totB?E/totB:0;
   r+=`<div class="bud" style="border-top:2px dashed var(--line);padding-top:12px"><div class="top"><b>🌊 Total</b><b>${rp(E)} / ${totB?rp(totB):"–"}</b></div><div class="bar"><i class="${p>1?"over":p>.8?"warn":""}" style="width:${Math.min(p*100,100)}%"></i></div></div>`;
   $("recap").innerHTML=r;
-  $("recap").querySelectorAll("input[data-b]").forEach(i=>{bindMoney(i);i.onchange=()=>{budgets[i.dataset.b]=num(i.value);save();render()}});
+  $("recap").querySelectorAll("input[data-b]").forEach(i=>{bindMoney(i);i.onchange=()=>{budgets[i.dataset.b]=num(i.value);saveS();render()}});
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
   tab=b.dataset.t;
@@ -262,6 +326,7 @@ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
 });
 $("prev").onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()};
 $("next").onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()};
+$("today").onclick=()=>{view=new Date();sel=iso(new Date());render()};
 $("dows").innerHTML=["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map(d=>`<div class="dow">${d}</div>`).join("");
 $("exp").onclick=()=>{
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({data,budgets,set})],{type:"application/json"}));
@@ -271,10 +336,10 @@ $("impB").onclick=()=>$("imp").click();
 $("imp").onchange=e=>{
   const f=e.target.files[0];if(!f)return;
   const rd=new FileReader();rd.onload=()=>{
-    try{const j=JSON.parse(rd.result);if(Array.isArray(j.data)){data=j.data;budgets=j.budgets||{};if(j.set)set=normSet(j.set);setupSet();save();render();alert("Backup berhasil dimuat ✨")}}catch(err){alert("File backup tidak valid")}
+    try{const j=JSON.parse(rd.result);if(Array.isArray(j.data)){data=j.data;budgets=j.budgets||{};if(j.set)set=normSet(j.set);setupSet();saveS();render();alert("Backup berhasil dimuat ✨")}}catch(err){alert("File backup tidak valid")}
   };rd.readAsText(f);
 };
-function setupSet(){$("s_roll").checked=!!set.roll;$("s_roll").onchange=e=>{set.roll=e.target.checked;save();render()}}
+function setupSet(){}
 setupSet();
 // app icon for iPhone home screen
 try{
@@ -284,6 +349,58 @@ try{
   const l=document.createElement("link");l.rel="apple-touch-icon";l.href=c.toDataURL("image/png");document.head.appendChild(l);
 }catch(e){}
 render();
+
+const b64=t=>btoa(unescape(encodeURIComponent(t)));
+const unb64=t=>decodeURIComponent(escape(atob(t.replace(/\s/g,""))));
+const sortO=o=>Object.fromEntries(Object.entries(o||{}).sort());
+function canon(o){const st=normSet(o.set);return JSON.stringify({d:[...(o.data||[])].sort((a,b)=>a.id-b.id),b:sortO(o.budgets),s:{dow:st.dow,ov:sortO(st.ov),roll:!!st.roll},x:[...new Set(o.deleted||[])].sort()})}
+const cur=()=>({data,budgets,set,deleted:meta.deleted});
+function cst(t){$("cs").textContent=t?" · "+t:"";$("ghst").textContent=gh.token?(t||"Tersambung"):"Belum tersambung. Buat repo private + token dulu (lihat panduan)."}
+function merge(r){
+  const del=new Set([...(meta.deleted||[]),...(r.deleted||[])]),m=new Map();
+  [...(r.data||[]),...data].forEach(t=>{if(del.has(t.id))return;const o=m.get(t.id);if(!o||(t.u||0)>=(o.u||0))m.set(t.id,t)});
+  data=[...m.values()];meta.deleted=[...del];
+  if((r.sts||0)>meta.sts){budgets=r.budgets||{};set=normSet(r.set);meta.sts=r.sts}
+}
+function gapi(method,body){
+  return fetch(`https://api.github.com/repos/${gh.repo}/contents/${gh.path||"kantong-laut.json"}?_=${Date.now()}`,{method,cache:"no-store",headers:{Authorization:"Bearer "+gh.token,Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
+}
+let syncing=false,tmr=null;
+function schedSync(){if(!gh.token)return;clearTimeout(tmr);tmr=setTimeout(()=>sync(),1500)}
+async function sync(retry){
+  if(!gh.token||!gh.repo||syncing)return;
+  syncing=true;cst("⏳ sinkron...");
+  try{
+    const r=await gapi("GET");let sha=null,remote=null;
+    if(r.ok){const j=await r.json();sha=j.sha;remote=JSON.parse(unb64(j.content))}
+    else if(r.status!==404)throw new Error(r.status===401?"token salah atau kedaluwarsa":r.status===403?"token tidak punya akses":"error "+r.status);
+    const before=canon(cur());
+    if(remote)merge(remote);
+    saveLocal();
+    const changed=canon(cur())!==before;
+    if(!remote||canon(remote)!==canon(cur())){
+      const pr=await gapi("PUT",{message:"sync "+new Date().toISOString(),content:b64(JSON.stringify({v:1,sts:meta.sts,data,budgets,set,deleted:meta.deleted})),...(sha?{sha}:{})});
+      if(pr.status===409||pr.status===422){syncing=false;if(!retry)return sync(true);throw new Error("bentrok, coba sync lagi")}
+      if(!pr.ok)throw new Error(pr.status===404?"repo tidak ketemu atau token tanpa akses":"error "+pr.status);
+    }
+    cst("☁️ tersinkron "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));
+    if(changed){setupSet();render()}
+  }catch(e){cst("⚠️ "+(e.message||"gagal sync"))}
+  syncing=false;
+}
+$("g_repo").value=gh.repo||"";$("g_path").value=gh.path||"";if(gh.token)$("g_tok").placeholder="tersimpan ✓ (kosongkan kalau tidak diganti)";
+$("g_save").onclick=()=>{
+  const repo=$("g_repo").value.trim(),tok=$("g_tok").value.trim()||gh.token||"";
+  if(!/^[^\/\s]+\/[^\/\s]+$/.test(repo)||!tok){alert("Isi repo (format username/nama-repo) dan token dulu ya");return}
+  gh={repo,path:$("g_path").value.trim()||"kantong-laut.json",token:tok};
+  try{localStorage.setItem("kl_gh",JSON.stringify(gh))}catch(e){}
+  $("g_tok").value="";$("g_tok").placeholder="tersimpan ✓";sync();
+};
+$("g_now").onclick=()=>sync();
+$("g_off").onclick=()=>{gh={};try{localStorage.removeItem("kl_gh")}catch(e){}$("g_tok").value="";$("g_tok").placeholder="github_pat_...";cst("")};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)sync()});
+window.addEventListener("online",()=>sync());
+cst("");sync();
 </script>
 </body>
 </html>
