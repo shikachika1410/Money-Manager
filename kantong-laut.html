@@ -17,7 +17,7 @@
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Trebuchet MS",-apple-system,system-ui,sans-serif;font-size:15px;line-height:1.4;
 background-image:radial-gradient(circle at 0 0,#d6eefa 0,transparent 45%),radial-gradient(circle at 100% 100%,#dcf5f2 0,transparent 45%);background-attachment:fixed}
 .wrap{max-width:860px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 110px}
-@media (max-width:420px){.wrap{padding-left:6px;padding-right:6px}body{font-size:14px}.day{min-height:92px;font-size:.56rem}.qq button{width:16px;height:16px;font-size:.7rem}.day .n{font-size:.86rem}}
+@media (max-width:420px){.wrap{padding-left:4px;padding-right:4px}body{font-size:14px}.day{min-height:118px}}
 header{text-align:center}
 h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight:700;color:#3d7f9e;letter-spacing:.2px}.sub{color:var(--mut);font-size:.82rem;margin:2px 0 12px;font-weight:600}
 .card{background:var(--card);border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(111,183,216,.16)}
@@ -30,7 +30,7 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .inc{color:var(--inc)}.exp{color:var(--exp)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .dow{text-align:center;font-size:.68rem;color:var(--mut)}
-.day{min-height:104px;border-radius:13px;background:var(--soft);padding:4px 2px;font-size:.6rem;border:2px solid transparent;overflow:hidden}
+.day{min-height:112px;border-radius:13px;background:var(--soft);padding:5px 3px;font-size:.62rem;border:2px solid transparent;overflow:hidden}
 .day.empty{background:none}.day.today{border-color:var(--pri2)}.day.sel{background:var(--pri);color:#fff}
 .day .n{font-weight:800;font-size:.98rem}
 .day .i{color:var(--inc);font-weight:800}.day.sel .i{color:#fff}
@@ -38,9 +38,9 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .day .bar2{height:6px;border-radius:9px;background:rgba(255,255,255,.75);overflow:hidden;margin-top:3px}
 .day .bar2 i{display:block;height:100%;background:#f6b4c2;border-radius:9px}
 .day .bar2 i.over{background:#e5566f}
-.damt{display:flex;justify-content:space-between;align-items:baseline;font-size:.66rem;font-weight:800;margin:2px 0 3px}
+.damt{display:flex;flex-direction:column;gap:1px;font-size:.66rem;font-weight:800;margin:2px 0 3px;line-height:1.25}
 .damt .sp{color:var(--exp)}.damt .sp.z{color:var(--mut);font-weight:700}
-.day .jt{color:var(--pri2);font-weight:800;padding:1px 3px;border-radius:6px;text-decoration:underline dotted;text-underline-offset:2px}
+.day .jt{color:var(--pri2);font-weight:800;padding:1px 2px;border-radius:6px;text-decoration:underline dotted;text-underline-offset:2px;font-size:.92em}
 .pctw{display:flex;justify-content:flex-end}
 .day .pct{font-size:.56rem;color:var(--mut);font-weight:800;margin-top:1px}
 .day .pct.over{color:var(--exp)}
@@ -58,7 +58,7 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .dbox .big{font-size:1.25rem}
 .dbox button{border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}.dbox button.g{background:#fff;color:var(--ink)}
 .card.calc{padding:12px 6px}
-@media (max-width:420px){.card.calc{padding:10px 3px}.grid{gap:3px}}
+@media (max-width:420px){.card.calc{padding:10px 2px}.grid{gap:3px}}
 .lg{font-size:.7rem;color:var(--mut);text-align:center;margin:-4px 0 12px}
 .lb{font-size:.78rem;font-weight:800;color:var(--mut);display:block;margin:6px 0 3px}.hint{font-size:.8rem;color:var(--mut);margin-bottom:6px}.dg{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.dg input{margin-bottom:4px}
 h3{margin:0 0 10px;font-family:Quicksand,Nunito,sans-serif;font-size:1.08rem;font-weight:700}
@@ -105,17 +105,18 @@ nav.tabs button.on{color:var(--pri2)}
 #dpanel .er button:not(.btn){border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}
 #djB{flex:0 0 100px!important}
 .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ph h3{margin:0}.xb{border:0;background:var(--soft);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:1rem}
-.lrow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.lrow{display:flex;align-items:center;gap:10px;padding:13px 8px;border-bottom:1px solid var(--line);border-radius:14px}
 .lrow:last-child{border:0}
 .lrow.today{background:var(--soft);border-radius:14px}
-.lrow .ld{width:46px;text-align:center;flex-shrink:0}
-.lrow .ld b{display:block;font-size:1.15rem;font-family:Quicksand,sans-serif}
+.lrow .ld{width:44px;text-align:center;flex-shrink:0}
+.lrow .ld b{display:block;font-size:1.3rem;font-family:Quicksand,sans-serif}
 .lrow .ld small{color:var(--mut);font-size:.65rem}
 .lrow .lmid{flex:1;min-width:0}
-.lrow .lsub{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;margin-bottom:4px}
+.lrow .lsub{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;margin-bottom:5px}
 .lrow .lsub .sp{color:var(--exp)}.lrow .lsub .sp.z{color:var(--mut);font-weight:600}
+.lrow .lright{min-width:44px}
 .lrow .lsub .jt{color:var(--pri2)}
-.lbar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.lbar{height:9px;border-radius:99px;background:var(--soft);overflow:hidden}
 .lrow.today .lbar{background:#fff}
 .lbar i{display:block;height:100%;background:linear-gradient(90deg,#a9dcef,var(--pri2));border-radius:99px}
 .lbar i.over{background:linear-gradient(90deg,#f7b3c1,var(--exp))}
@@ -140,6 +141,7 @@ nav.tabs button.on{color:var(--pri2)}
 .hrow .amt.i{color:var(--inc)}.hrow .amt.e{color:var(--exp)}
 .hrow .acts{display:flex;gap:0;margin-left:2px}
 .hrow .acts button{border:0;background:none;font-size:.8rem;padding:3px}
+#listv{margin-top:4px}
 .hide{display:none}
 </style>
 </head>
@@ -321,7 +323,7 @@ function render(){
   }
   $("cal").innerHTML=h;
   let lh="";
-  for(let d=1;d<=days;d++){
+  for(let d=days;d>=1;d--){
     const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),fxd=tx.some(x=>x.fixed),e=al[k].sp,pc=al[k].b>0?Math.round(e/al[k].b*100):(e>0?100:0);
     const wd=new Date(k+"T00:00:00").toLocaleDateString("id-ID",{weekday:"short"});
     lh+=`<div class="lrow ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="ld"><b>${d}</b><small>${wd}</small></div><div class="lmid"><div class="lsub"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt">${sg(al[k].b)} · ${pc}%</span></div><div class="lbar"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div></div><div class="lright">${i?`<span class="i">+${short(i)}</span>`:""}${fxd?"📌":""}</div></div>`;
