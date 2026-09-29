@@ -16,7 +16,8 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Trebuchet MS",-apple-system,system-ui,sans-serif;font-size:15px;line-height:1.4;
 background-image:radial-gradient(circle at 0 0,#d6eefa 0,transparent 45%),radial-gradient(circle at 100% 100%,#dcf5f2 0,transparent 45%);background-attachment:fixed}
-.wrap{max-width:860px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 110px}
+.wrap{max-width:860px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 110px}
+@media (max-width:420px){.wrap{padding-left:6px;padding-right:6px}body{font-size:14px}.day{min-height:92px;font-size:.56rem}.qq button{width:16px;height:16px;font-size:.7rem}.day .n{font-size:.86rem}}
 header{text-align:center}
 h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight:700;color:#3d7f9e;letter-spacing:.2px}.sub{color:var(--mut);font-size:.82rem;margin:2px 0 12px;font-weight:600}
 .card{background:var(--card);border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:0 4px 16px rgba(111,183,216,.16)}
@@ -29,7 +30,7 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .inc{color:var(--inc)}.exp{color:var(--exp)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .dow{text-align:center;font-size:.68rem;color:var(--mut)}
-.day{min-height:106px;border-radius:14px;background:var(--soft);padding:5px 3px;font-size:.62rem;border:2px solid transparent;overflow:hidden}
+.day{min-height:104px;border-radius:13px;background:var(--soft);padding:4px 2px;font-size:.6rem;border:2px solid transparent;overflow:hidden}
 .day.empty{background:none}.day.today{border-color:var(--pri2)}.day.sel{background:var(--pri);color:#fff}
 .day .n{font-weight:800;font-size:.98rem}
 .day .i{color:var(--inc);font-weight:800}.day.sel .i{color:#fff}
@@ -48,7 +49,7 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .day .jt.cut{color:var(--exp)}.day.sel .jt.cut{color:#ffe1e7;background:rgba(255,255,255,.3)}
 .dtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:1px}
 .qq{display:flex;gap:3px}
-.qq button{width:20px;height:20px;border-radius:50%;border:0;font-weight:900;font-size:.85rem;line-height:1;color:#fff;padding:0}
+.qq button{width:18px;height:18px;border-radius:50%;border:0;font-weight:900;font-size:.78rem;line-height:1;color:#fff;padding:0}
 .qq .qm{background:var(--exp)}.qq .qp{background:var(--inc)}
 .day.sel .qq button{opacity:.9}
 .dbox{background:var(--soft);border-radius:16px;padding:12px;margin-bottom:10px;font-size:.92rem}
@@ -56,7 +57,8 @@ h1{margin:0;font-family:Quicksand,Nunito,sans-serif;font-size:1.7rem;font-weight
 .edit{border-top:2px dashed #cbe4ef;margin-top:8px;padding-top:6px}.er{display:flex;gap:6px}.er input{margin:0;flex:1}
 .dbox .big{font-size:1.25rem}
 .dbox button{border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}.dbox button.g{background:#fff;color:var(--ink)}
-.card.calc{padding:12px 8px}
+.card.calc{padding:12px 6px}
+@media (max-width:420px){.card.calc{padding:10px 3px}.grid{gap:3px}}
 .lg{font-size:.7rem;color:var(--mut);text-align:center;margin:-4px 0 12px}
 .lb{font-size:.78rem;font-weight:800;color:var(--mut);display:block;margin:6px 0 3px}.hint{font-size:.8rem;color:var(--mut);margin-bottom:6px}.dg{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.dg input{margin-bottom:4px}
 h3{margin:0 0 10px;font-family:Quicksand,Nunito,sans-serif;font-size:1.08rem;font-weight:700}
@@ -86,7 +88,11 @@ nav.tabs button.on{color:var(--pri2)}
 .sheet{background:#fff;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.15)}
 #dj{font-size:1.4rem;font-weight:800;text-align:center;font-family:Quicksand,Nunito,sans-serif}
 .er button{flex:1;height:44px}.sheet .er{margin-top:8px}
-.calhead{display:flex;justify-content:flex-end;margin:0 4px 8px}.calhead button{border:0;background:var(--soft);color:var(--pri2);font:inherit;font-weight:800;border-radius:999px;padding:7px 15px}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px;gap:6px}
+.calhead button{border:0;background:var(--soft);color:var(--pri2);font:inherit;font-weight:800;border-radius:999px;padding:7px 14px;font-size:.82rem}
+.vtabs{display:flex;gap:4px;background:var(--soft);border-radius:999px;padding:3px}
+.vtabs button{border:0;background:none;color:var(--mut);font:inherit;font-weight:800;font-size:.78rem;padding:6px 12px;border-radius:999px}
+.vtabs button.on{background:#fff;color:var(--pri2);box-shadow:0 2px 6px rgba(111,183,216,.25)}
 .tag{font-family:Nunito,sans-serif;font-size:.68rem;background:var(--pri);color:#fff;border-radius:999px;padding:2px 9px;vertical-align:middle}
 .budbox{background:linear-gradient(135deg,#eaf7fc,#dcf0fa);border:2px solid #cfe9f5;border-radius:18px;padding:12px;margin-bottom:10px}
 .qbs{display:flex;gap:8px;margin:10px 0}.qb{flex:1;height:50px;border:0;border-radius:18px;font:inherit;font-weight:800;color:#fff;font-size:.95rem}
@@ -99,6 +105,25 @@ nav.tabs button.on{color:var(--pri2)}
 #dpanel .er button:not(.btn){border:0;background:var(--pri2);color:#fff;border-radius:12px;padding:0 14px;font:inherit;font-weight:800}
 #djB{flex:0 0 100px!important}
 .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ph h3{margin:0}.xb{border:0;background:var(--soft);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:1rem}
+.lrow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.lrow:last-child{border:0}
+.lrow.today{background:var(--soft);border-radius:14px}
+.lrow .ld{width:46px;text-align:center;flex-shrink:0}
+.lrow .ld b{display:block;font-size:1.15rem;font-family:Quicksand,sans-serif}
+.lrow .ld small{color:var(--mut);font-size:.65rem}
+.lrow .lmid{flex:1;min-width:0}
+.lrow .lsub{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;margin-bottom:4px}
+.lrow .lsub .sp{color:var(--exp)}.lrow .lsub .sp.z{color:var(--mut);font-weight:600}
+.lrow .lsub .jt{color:var(--pri2)}
+.lbar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.lrow.today .lbar{background:#fff}
+.lbar i{display:block;height:100%;background:linear-gradient(90deg,#a9dcef,var(--pri2));border-radius:99px}
+.lbar i.over{background:linear-gradient(90deg,#f7b3c1,var(--exp))}
+.lright{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:.72rem;font-weight:800;min-width:38px}
+.lright .i{color:var(--inc)}
+.pbar{height:14px;border-radius:99px;background:#fff;overflow:hidden;margin:6px 0}
+.pbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#a9dcef,var(--pri2))}
+.pbar i.over{background:linear-gradient(90deg,#f7b3c1,var(--exp))}
 .hide{display:none}
 </style>
 </head>
@@ -116,7 +141,9 @@ nav.tabs button.on{color:var(--pri2)}
 </div>
 
 <section id="p_cal">
-  <div class="card calc"><div class="calhead"><button id="today">📍 Hari ini</button></div><div class="grid" id="dows"></div><div class="grid" id="cal" style="margin-top:4px"></div></div>
+  <div class="card calc"><div class="calhead"><div class="vtabs"><button id="vcal" class="on">📅 Kalender</button><button id="vlist">📋 List</button></div><button id="today">📍 Hari ini</button></div>
+  <div id="calv"><div class="grid" id="dows"></div><div class="grid" id="cal" style="margin-top:4px"></div></div>
+  <div id="listv" class="hide"></div></div>
   <div class="lg">Tap tanggal untuk atur jatah & catat transaksi · angka biru = jatah harian · bar = terpakai vs jatah · 📌 = biaya tetap</div>
   
 </section>
@@ -168,7 +195,7 @@ function bindMoney(el){if(el)el.addEventListener("input",()=>{const n=num(el.val
 function normSet(sv){const d={dow:[200000,100000,100000,100000,100000,100000,200000],ov:{},roll:false};if(sv&&sv.wd!=null&&!sv.dow)sv.dow=[sv.we,sv.wd,sv.wd,sv.wd,sv.wd,sv.wd,sv.we];return Object.assign(d,sv||{})}
 const rp=n=>(n<0?"-":"")+"Rp"+dot(Math.abs(n));
 const short=n=>n>=1e6?(n/1e6).toFixed(1).replace(".0","").replace(".",",")+"jt":n>=1e3?(Math.round(n/1000*10)/10+"").replace(".0","").replace(".",",")+"k":""+n;
-let qa=null,set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"};
+let calView=(localStorage.getItem("kl_view")||"cal"),qa=null,set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"};
 try{data=JSON.parse(localStorage.getItem("kl_data")||"[]");budgets=JSON.parse(localStorage.getItem("kl_budget")||"{}");set=normSet(JSON.parse(localStorage.getItem("kl_set")||"{}"))}catch(e){}
 let gh={},meta={sts:0,deleted:[]};
 try{gh=JSON.parse(localStorage.getItem("kl_gh")||"{}");meta=Object.assign(meta,JSON.parse(localStorage.getItem("kl_meta")||"{}"))}catch(e){}
@@ -209,7 +236,9 @@ function dayPanel(){
   $("dpanel").innerHTML=`<div class="ph"><h3>${sd.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}${sel===iso(new Date())?' <span class="tag">hari ini</span>':""}</h3><button class="xb" id="dx">✕</button></div>
 <div class="budbox"><label class="lb">🎯 Jatah hari ini · ketik lalu Simpan</label>
 <div class="er"><input type="text" inputmode="numeric" id="dj" value="${dot(A.b)}"><button id="djB">Simpan</button></div>
-<div class="jsub">${A.c?`Efektif ${rp(A.av)} (${A.c<0?"dikurangi kelebihan kemarin":"ditambah sisa kemarin"} ${rp(Math.abs(A.c))}) · `:""}Terpakai ${rp(A.sp)} · Sisa <b class="${A.rem<0?"exp":"inc"}">${rp(A.rem)}</b></div>
+<div class="pbar"><i class="${A.sp>A.av?"over":""}" style="width:${Math.max(A.av>0?Math.min(A.sp/A.av,1):(A.sp>0?1:0),A.sp>0?.04:0)*100}%"></i></div>
+<div class="jsub" style="display:flex;justify-content:space-between"><span>${A.c?`Efektif ${rp(A.av)} · `:""}Terpakai ${rp(A.sp)}</span><b>${A.av>0?Math.round(A.sp/A.av*100):(A.sp>0?100:0)}%</b></div>
+<div class="jsub">${A.c?`(${A.c<0?"dikurangi kelebihan kemarin":"ditambah sisa kemarin"} ${rp(Math.abs(A.c))}) · `:""}Sisa <b class="${A.rem<0?"exp":"inc"}">${rp(A.rem)}</b></div>
 ${A.rem>0?`<button class="lnk" id="djRoll">💰 Tambahin sisa ${rp(A.rem)} ke jatah besok?</button>`:""}
 <div class="jsub"><button class="lnk" id="djA">Terapkan ke semua ${wn} bulan ini</button>${hasOv?' · <button class="lnk" id="djR">Reset</button>':""}</div>
 ${fx?`<div class="jsub">📌 Biaya tetap bulan ini ${rp(fx)} ≈ ${rp(fx/nd)}/hari, terpisah dari jatah</div>`:""}</div>
@@ -289,6 +318,14 @@ function render(){
     h+=`<div class="day ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="dtop"><span class="n">${d}</span><span class="qq"><button class="qm" data-act="exp" data-d="${k}">−</button><button class="qp" data-act="inc" data-d="${k}">+</button></span></div><div class="damt"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt ${al[k].av<al[k].b?"cut":""}">${sg(al[k].b)}</span></div><div class="bar2"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div><div class="pctw"><span class="pct ${pc>100?"over":""}">${pc}%</span></div>${i?`<div class="i">+${short(i)}</div>`:""}${fxd?'<div class="i" style="color:var(--pri2)">📌</div>':""}</div>`;
   }
   $("cal").innerHTML=h;
+  let lh="";
+  for(let d=1;d<=days;d++){
+    const k=m+"-"+pad(d),tx=mt.filter(x=>x.date===k),i=sumOf(tx,"inc"),fxd=tx.some(x=>x.fixed),e=al[k].sp,pc=al[k].b>0?Math.round(e/al[k].b*100):(e>0?100:0);
+    const wd=new Date(k+"T00:00:00").toLocaleDateString("id-ID",{weekday:"short"});
+    lh+=`<div class="lrow ${k===today?"today":""} ${k===sel?"sel":""}" data-d="${k}"><div class="ld"><b>${d}</b><small>${wd}</small></div><div class="lmid"><div class="lsub"><span class="sp ${e?"":"z"}">${e?"-"+short(e):"0"}</span><span class="jt">${sg(al[k].b)} · ${pc}%</span></div><div class="lbar"><i class="${e>al[k].b?"over":""}" style="width:${Math.max(al[k].b>0?Math.min(e/al[k].b,1):(e>0?1:0),e>0?.04:0)*100}%"></i></div></div><div class="lright">${i?`<span class="i">+${short(i)}</span>`:""}${fxd?"📌":""}</div></div>`;
+  }
+  $("listv").innerHTML=lh;
+  $("listv").querySelectorAll(".lrow").forEach(el=>el.onclick=()=>{sel=el.dataset.d;qa=null;render();$("ovl").classList.remove("hide")});
   let tj=0,tu=0;Object.values(al).forEach(a=>{tj+=a.b;tu+=a.sp});
   const fxT=sumOf(mt.filter(x=>x.fixed),"exp"),fxl=mt.filter(x=>x.type==="exp"&&x.fixed);
   $("sB").textContent=rp(tj-tu);$("sB").className=tj-tu<0?"exp":"inc";
@@ -337,6 +374,8 @@ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
 });
 $("prev").onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()};
 $("next").onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()};
+function setView(v){calView=v;localStorage.setItem("kl_view",v);$("vcal").classList.toggle("on",v==="cal");$("vlist").classList.toggle("on",v==="list");$("calv").classList.toggle("hide",v!=="cal");$("listv").classList.toggle("hide",v!=="list")}
+$("vcal").onclick=()=>setView("cal");$("vlist").onclick=()=>setView("list");setView(calView);
 $("today").onclick=()=>{view=new Date();sel=iso(new Date());render()};
 $("dows").innerHTML=["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map(d=>`<div class="dow">${d}</div>`).join("");
 $("exp").onclick=()=>{
