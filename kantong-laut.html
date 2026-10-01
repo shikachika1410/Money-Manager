@@ -126,6 +126,7 @@ nav.tabs button.on{color:var(--pri2)}
 .pbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#a9dcef,var(--pri2))}
 .pbar i.over{background:linear-gradient(90deg,#f7b3c1,var(--exp))}
 .hhead{display:flex;align-items:center;gap:8px;padding:10px 4px 6px;font-weight:800}
+.hhead.hnow{background:var(--soft);border-radius:12px;padding:10px 8px}
 .hhead .num{font-size:1.1rem;font-family:Quicksand,sans-serif}
 .hhead .wd{font-size:.66rem;background:var(--soft);color:var(--mut);padding:3px 9px;border-radius:999px;font-weight:700}
 .hhead .wd.sun{background:#fde2e8;color:var(--exp)}
@@ -211,7 +212,7 @@ function bindMoney(el){if(el)el.addEventListener("input",()=>{const n=num(el.val
 function normSet(sv){const d={dow:[200000,100000,100000,100000,100000,100000,200000],ov:{},roll:false};if(sv&&sv.wd!=null&&!sv.dow)sv.dow=[sv.we,sv.wd,sv.wd,sv.wd,sv.wd,sv.wd,sv.we];return Object.assign(d,sv||{})}
 const rp=n=>(n<0?"-":"")+"Rp"+dot(Math.abs(n));
 const short=n=>n>=1e6?(n/1e6).toFixed(1).replace(".0","").replace(".",",")+"jt":n>=1e3?(Math.round(n/1000*10)/10+"").replace(".0","").replace(".",",")+"k":""+n;
-let calView=(localStorage.getItem("kl_view")||"cal"),qa=null,set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"};
+let calView=(localStorage.getItem("kl_view")||"cal"),qa=null,set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"},histScroll=false;
 try{data=JSON.parse(localStorage.getItem("kl_data")||"[]");budgets=JSON.parse(localStorage.getItem("kl_budget")||"{}");set=normSet(JSON.parse(localStorage.getItem("kl_set")||"{}"))}catch(e){}
 let gh={},meta={sts:0,deleted:[]};
 try{gh=JSON.parse(localStorage.getItem("kl_gh")||"{}");meta=Object.assign(meta,JSON.parse(localStorage.getItem("kl_meta")||"{}"))}catch(e){}
@@ -347,18 +348,17 @@ function render(){
   // history
   $("hf").innerHTML=[["all","Semua"],["exp","Keluar"],["inc","Masuk"]].map(f=>`<button class="chip ${hf===f[0]?"on":""}" data-f="${f[0]}">${f[1]}</button>`).join("");
   $("hf").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{hf=b.dataset.f;render()});
-  const hl=mt.filter(x=>hf==="all"||x.type===hf).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  let hh="",last="";
-  hl.forEach(x=>{
-    if(x.date!==last){
-      last=x.date;
-      const dd=new Date(x.date+"T00:00:00"),dayTx=mt.filter(t=>t.date===x.date&&(hf==="all"||t.type===hf));
-      const di=sumOf(dayTx,"inc"),de=sumOf(dayTx,"exp");
-      hh+=`<div class="hhead"><span class="num">${dd.getDate()}</span><span class="wd ${dd.getDay()===0?"sun":""}">${dd.toLocaleDateString("id-ID",{weekday:"short"})}</span><span class="tot">${hf!=="exp"?`<span class="i">${rp(di)}</span>`:""}${hf!=="inc"?`<span class="e">${rp(de)}</span>`:""}</span></div>`;
-    }
-    hh+=`<div class="hrow"><span class="ic" style="background:${CBG[x.cat]||"var(--soft)"}">${icon(x.type,x.cat)}</span><div class="t"><small>${x.cat}</small><b>${x.note||(x.spread?"🌊 disebar "+x.spread+" hari":x.fixed?"📌 biaya tetap":x.cat)}</b></div><span class="amt ${x.type}">${rp(x.amt)}</span><span class="acts"><button data-e="${x.id}">✏️</button><button data-x="${x.id}">🗑️</button></span></div>`;
+  const hl=mt.filter(x=>hf==="all"||x.type===hf).sort((a,b)=>a.date.localeCompare(b.date)||b.id-a.id);
+  const hDatesSorted=[];for(let d=1;d<=days;d++)hDatesSorted.push(m+"-"+pad(d));
+  let hh="";
+  hDatesSorted.forEach(k=>{
+    const dd=new Date(k+"T00:00:00"),dayTx=hl.filter(x=>x.date===k);
+    const di=sumOf(mt.filter(t=>t.date===k),"inc"),de=sumOf(mt.filter(t=>t.date===k),"exp");
+    hh+=`<div class="hhead ${k===today?"hnow":""}" data-k="${k}"><span class="num">${dd.getDate()}</span><span class="wd ${dd.getDay()===0?"sun":""}">${dd.toLocaleDateString("id-ID",{weekday:"short"})}</span>${k===today?'<span class="tag">hari ini</span>':""}<span class="tot">${hf!=="exp"?`<span class="i">${rp(di)}</span>`:""}${hf!=="inc"?`<span class="e">${rp(de)}</span>`:""}</span></div>`;
+    hh+=dayTx.length?dayTx.map(x=>`<div class="hrow"><span class="ic" style="background:${CBG[x.cat]||"var(--soft)"}">${icon(x.type,x.cat)}</span><div class="t"><small>${x.cat}</small><b>${x.note||(x.spread?"🌊 disebar "+x.spread+" hari":x.fixed?"📌 biaya tetap":x.cat)}</b></div><span class="amt ${x.type}">${rp(x.amt)}</span><span class="acts"><button data-e="${x.id}">✏️</button><button data-x="${x.id}">🗑️</button></span></div>`).join(""):'<div class="muted" style="padding:6px 4px">Belum ada transaksi 🐚</div>';
   });
   $("hist").innerHTML=hh||'<div class="muted">Belum ada riwayat bulan ini 🐚</div>';bindDel($("hist"));
+  if(histScroll){histScroll=false;const tgt=$("hist").querySelector(".hnow");if(tgt)setTimeout(()=>tgt.scrollIntoView({block:"start"}),0)}
   // recap with budgets
   const totB=C.exp.reduce((s,c)=>s+(budgets[c[1]]||0),0);
   let r=C.exp.map(([ic,nm])=>{
@@ -377,6 +377,7 @@ document.querySelectorAll("#tabs button[data-t]").forEach(b=>b.onclick=()=>{
   tab=b.dataset.t;
   document.querySelectorAll("#tabs button[data-t]").forEach(x=>x.classList.toggle("on",x===b));
   ["cal","his","rec"].forEach(t=>$("p_"+t).classList.toggle("hide",t!==tab));
+  if(tab==="his")histScroll=true;
   window.scrollTo(0,0);render();
 });
 $("fab").onclick=()=>{sel=iso(new Date());view=new Date();qa=null;render();$("ovl").classList.remove("hide")};
