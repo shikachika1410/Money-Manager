@@ -143,6 +143,10 @@ nav.tabs button.on{color:var(--pri2)}
 .hrow .acts{display:flex;gap:0;margin-left:2px}
 .hrow .acts button{border:0;background:none;font-size:.8rem;padding:3px}
 #listv{margin-top:4px}
+.calcrow{display:flex;gap:6px;margin:-4px 0 8px}
+.calcrow button{flex:1;height:38px;border:0;border-radius:11px;background:#fff;border:2px solid var(--line);color:var(--pri2);font:inherit;font-weight:800;font-size:1rem}
+.calcrow #qa_eq{background:var(--pri2);color:#fff;border-color:var(--pri2)}
+.calcrow #qa_clr{color:var(--exp);border-color:#f7c9d3}
 .hide{display:none}
 </style>
 </head>
@@ -210,13 +214,13 @@ const num=v=>parseInt(String(v).replace(/\D/g,""))||0;
 const dot=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,".");
 function bindMoney(el){if(el)el.addEventListener("input",()=>{const n=num(el.value);el.value=n?dot(n):""})}
 function evalExpr(s){
-  s=s.replace(/[^0-9+\-*/.]/g,"").replace(/[+\-*/.]+$/,"");
+  s=s.replace(/[^0-9+\-*/]/g,"").replace(/[+\-*/]+$/,"");
   if(!s||!/[+\-*/]/.test(s))return null;
   try{const v=Function('"use strict";return ('+s+')')();return isFinite(v)?Math.round(Math.abs(v)):null}catch(e){return null}
 }
 function bindCalc(id,onDone){
   const el=$(id);if(!el)return;
-  el.addEventListener("input",()=>{const v=el.value;if(/^[\d.,]*$/.test(v)){const n=num(v);el.value=n?dot(n):v}});
+  el.addEventListener("input",()=>{const v=el.value;if(/^[\d.,]*$/.test(v)){const n=num(v);el.value=n?dot(n):v}else if(v.includes(".")){const p=el.selectionStart;el.value=v.replace(/\./g,"");el.setSelectionRange(p-1,p-1)}});
   const doCalc=()=>{const r=evalExpr(el.value);if(r!=null){el.value=dot(r);return true}return false};
   el.addEventListener("blur",doCalc);
   el.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(/[+\-*/]/.test(el.value)&&doCalc())return;if(onDone)onDone()}};
@@ -299,11 +303,20 @@ function qaForm(){
   el.innerHTML=`<div class="qa ${t}"><label class="lb">${tx?"✏️ Ubah":"Tambah"} ${t==="exp"?"pengeluaran":"pemasukan"}</label><div class="cats">${C[t].map(c=>`<button class="chip ${c[1]===fc[t]?"on":""}" data-c="${c[1]}">${c[0]} ${c[1]}</button>`).join("")}</div>
 ${tx?`<label class="lb">Tanggal</label><input type="date" id="qa_d" value="${tx.date}">`:""}
 <input type="text" inputmode="numeric" id="qa_a" placeholder="Jumlah, contoh: 50.000" value="${tx?dot(tx.amt):""}">
+<div class="calcrow"><button type="button" data-op="+">+</button><button type="button" data-op="-">−</button><button type="button" data-op="*">×</button><button type="button" data-op="/">÷</button><button type="button" id="qa_eq">=</button><button type="button" id="qa_clr">C</button></div>
 <input type="text" id="qa_n" placeholder="Catatan (opsional)" value="${tx?(tx.note||"").replace(/"/g,"&quot;"):""}">
 ${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:auto;margin:0" ${tx&&tx.fixed?"checked":""}> 📌 Biaya tetap bulanan (kos, dll) · tidak memotong jatah harian</label><div id="qa_sw" class="${tx&&tx.fixed?"hide":""}"><input type="number" inputmode="numeric" id="qa_s" placeholder="Sebar ke berapa hari? (opsional)" value="${tx&&tx.spread||""}"></div>`:""}
 <div class="er"><button class="btn ${t==="exp"?"e":"i"}" id="qa_ok">${tx?"Simpan perubahan":"Tambah ✨"}</button><button class="btn s" id="qa_x" style="margin-top:0">Batal</button></div></div>`;
   bindCalc("qa_a",()=>$("qa_n").focus());
   $("qa_a").placeholder="Jumlah, contoh: 50.000 atau 150000-20000";
+  el.querySelectorAll(".calcrow [data-op]").forEach(b=>b.onclick=()=>{
+    const i=$("qa_a");let v=i.value;
+    if(!/[+\-*/]/.test(v))v=v.trim()?String(num(v)):"0";
+    else if(/[+\-*/]$/.test(v))v=v.slice(0,-1);
+    i.value=v+b.dataset.op;i.focus();
+  });
+  $("qa_eq").onclick=()=>{const r=evalExpr($("qa_a").value);if(r!=null)$("qa_a").value=dot(r);$("qa_a").focus()};
+  $("qa_clr").onclick=()=>{$("qa_a").value="";$("qa_a").focus()};
   $("qa_n").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("qa_ok").click()}};
   el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fc[t]=b.dataset.c;el.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b))});
   if($("qa_f"))$("qa_f").onchange=e=>$("qa_sw").classList.toggle("hide",e.target.checked);
