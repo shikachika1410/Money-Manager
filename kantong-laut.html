@@ -209,6 +209,18 @@ const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const num=v=>parseInt(String(v).replace(/\D/g,""))||0;
 const dot=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,".");
 function bindMoney(el){if(el)el.addEventListener("input",()=>{const n=num(el.value);el.value=n?dot(n):""})}
+function evalExpr(s){
+  s=s.replace(/[^0-9+\-*/.]/g,"").replace(/[+\-*/.]+$/,"");
+  if(!s||!/[+\-*/]/.test(s))return null;
+  try{const v=Function('"use strict";return ('+s+')')();return isFinite(v)?Math.round(Math.abs(v)):null}catch(e){return null}
+}
+function bindCalc(id,onDone){
+  const el=$(id);if(!el)return;
+  el.addEventListener("input",()=>{const v=el.value;if(/^[\d.,]*$/.test(v)){const n=num(v);el.value=n?dot(n):v}});
+  const doCalc=()=>{const r=evalExpr(el.value);if(r!=null){el.value=dot(r);return true}return false};
+  el.addEventListener("blur",doCalc);
+  el.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(/[+\-*/]/.test(el.value)&&doCalc())return;if(onDone)onDone()}};
+}
 function normSet(sv){const d={dow:[200000,100000,100000,100000,100000,100000,200000],ov:{},roll:false};if(sv&&sv.wd!=null&&!sv.dow)sv.dow=[sv.we,sv.wd,sv.wd,sv.wd,sv.wd,sv.wd,sv.we];return Object.assign(d,sv||{})}
 const rp=n=>(n<0?"-":"")+"Rp"+dot(Math.abs(n));
 const short=n=>n>=1e6?(n/1e6).toFixed(1).replace(".0","").replace(".",",")+"jt":n>=1e3?(Math.round(n/1000*10)/10+"").replace(".0","").replace(".",",")+"k":""+n;
@@ -290,8 +302,8 @@ ${tx?`<label class="lb">Tanggal</label><input type="date" id="qa_d" value="${tx.
 <input type="text" id="qa_n" placeholder="Catatan (opsional)" value="${tx?(tx.note||"").replace(/"/g,"&quot;"):""}">
 ${t==="exp"?`<label class="chk"><input type="checkbox" id="qa_f" style="width:auto;margin:0" ${tx&&tx.fixed?"checked":""}> 📌 Biaya tetap bulanan (kos, dll) · tidak memotong jatah harian</label><div id="qa_sw" class="${tx&&tx.fixed?"hide":""}"><input type="number" inputmode="numeric" id="qa_s" placeholder="Sebar ke berapa hari? (opsional)" value="${tx&&tx.spread||""}"></div>`:""}
 <div class="er"><button class="btn ${t==="exp"?"e":"i"}" id="qa_ok">${tx?"Simpan perubahan":"Tambah ✨"}</button><button class="btn s" id="qa_x" style="margin-top:0">Batal</button></div></div>`;
-  bindMoney($("qa_a"));
-  $("qa_a").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("qa_n").focus()}};
+  bindCalc("qa_a",()=>$("qa_n").focus());
+  $("qa_a").placeholder="Jumlah, contoh: 50.000 atau 150000-20000";
   $("qa_n").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("qa_ok").click()}};
   el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fc[t]=b.dataset.c;el.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b))});
   if($("qa_f"))$("qa_f").onchange=e=>$("qa_sw").classList.toggle("hide",e.target.checked);
