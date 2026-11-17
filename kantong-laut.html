@@ -149,6 +149,9 @@ nav.tabs button.on{color:var(--pri2)}
 .calcrow #qa_clr{color:var(--exp);border-color:#f7c9d3}
 .hide{display:none}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -176,15 +179,12 @@ nav.tabs button.on{color:var(--pri2)}
 <section id="p_rec" class="hide">
   <div class="card"><h3>📌 Biaya tetap bulan ini</h3><div id="fixed"></div></div>
   <div class="card"><h3>📊 Budget vs terpakai</h3><div id="recap"></div></div>
-  <div class="card"><h3>☁️ Sync GitHub</h3>
+  <div class="card"><h3>☁️ Sync Google</h3>
     <div class="hint" id="ghst"></div>
-    <label class="lb">Repo data (harus PRIVATE)</label><input type="text" id="g_repo" placeholder="username/kantong-laut-data" autocapitalize="off" autocorrect="off" spellcheck="false">
-    <label class="lb">Nama file</label><input type="text" id="g_path" placeholder="kantong-laut.json" autocapitalize="off" autocorrect="off">
-    <label class="lb">Token (Contents: read & write)</label><input type="password" id="g_tok" placeholder="github_pat_..." autocapitalize="off" autocorrect="off">
-    <button class="btn i" id="g_save">Simpan & sambungkan</button>
+    <button class="btn i" id="g_in">Masuk dengan Google</button>
     <button class="btn s" id="g_now">Sync sekarang</button>
-    <button class="btn s" id="g_off">Putuskan koneksi</button>
-    <div class="hint" style="margin-top:8px">Data otomatis di-pull saat app dibuka dan di-push tiap ada perubahan. Token cuma disimpan di perangkat ini, jadi isi sekali di HP dan sekali di laptop.</div></div>
+    <button class="btn s" id="g_out">Keluar</button>
+    <div class="hint" style="margin-top:8px">Cukup masuk sekali di tiap perangkat. Setelah itu data otomatis tersinkron tanpa isi apa-apa lagi, dan hanya bisa dibuka lewat akun Google-mu.</div></div>
   <div class="card"><h3>💾 Backup data</h3>
     <div class="muted" style="padding:0 0 6px;text-align:left">Simpan file backup sesekali biar data aman kalau ganti HP.</div>
     <button class="btn s" id="exp">Export backup</button>
@@ -230,8 +230,8 @@ const rp=n=>(n<0?"-":"")+"Rp"+dot(Math.abs(n));
 const short=n=>n>=1e6?(n/1e6).toFixed(1).replace(".0","").replace(".",",")+"jt":n>=1e3?(Math.round(n/1000*10)/10+"").replace(".0","").replace(".",",")+"k":""+n;
 let calView=(localStorage.getItem("kl_view")||"cal"),qa=null,set=normSet(),data=[],budgets={},view=new Date(),sel=iso(new Date()),tab="cal",hf="all",fc={exp:"F&B",inc:"Gaji"},histScroll=false;
 try{data=JSON.parse(localStorage.getItem("kl_data")||"[]");budgets=JSON.parse(localStorage.getItem("kl_budget")||"{}");set=normSet(JSON.parse(localStorage.getItem("kl_set")||"{}"))}catch(e){}
-let gh={},meta={sts:0,deleted:[]};
-try{gh=JSON.parse(localStorage.getItem("kl_gh")||"{}");meta=Object.assign(meta,JSON.parse(localStorage.getItem("kl_meta")||"{}"))}catch(e){}
+let meta={sts:0,deleted:[]};
+try{meta=Object.assign(meta,JSON.parse(localStorage.getItem("kl_meta")||"{}"))}catch(e){}
 function saveLocal(){try{localStorage.setItem("kl_data",JSON.stringify(data));localStorage.setItem("kl_budget",JSON.stringify(budgets));localStorage.setItem("kl_set",JSON.stringify(set));localStorage.setItem("kl_meta",JSON.stringify(meta))}catch(e){}}
 function save(){saveLocal();schedSync()}
 function saveS(){meta.sts=Date.now();save()}
@@ -434,57 +434,72 @@ try{
 }catch(e){}
 render();
 
-const b64=t=>btoa(unescape(encodeURIComponent(t)));
-const unb64=t=>decodeURIComponent(escape(atob(t.replace(/\s/g,""))));
 const sortO=o=>Object.fromEntries(Object.entries(o||{}).sort());
 function canon(o){const st=normSet(o.set);return JSON.stringify({d:[...(o.data||[])].sort((a,b)=>a.id-b.id),b:sortO(o.budgets),s:{dow:st.dow,ov:sortO(st.ov),roll:!!st.roll},x:[...new Set(o.deleted||[])].sort()})}
 const cur=()=>({data,budgets,set,deleted:meta.deleted});
-function cst(t){$("cs").textContent=t?" · "+t:"";$("ghst").textContent=gh.token?(t||"Tersambung"):"Belum tersambung. Buat repo private + token dulu (lihat panduan)."}
 function merge(r){
   const del=new Set([...(meta.deleted||[]),...(r.deleted||[])]),m=new Map();
   [...(r.data||[]),...data].forEach(t=>{if(del.has(t.id))return;const o=m.get(t.id);if(!o||(t.u||0)>=(o.u||0))m.set(t.id,t)});
   data=[...m.values()];meta.deleted=[...del];
   if((r.sts||0)>meta.sts){budgets=r.budgets||{};set=normSet(r.set);meta.sts=r.sts}
 }
-function gapi(method,body){
-  return fetch(`https://api.github.com/repos/${gh.repo}/contents/${encodeURIComponent(gh.path||"kantong-laut.json")}?_=${Date.now()}`,{method,cache:"no-store",headers:{Authorization:"Bearer "+gh.token,Accept:"application/vnd.github+json"},body:body?JSON.stringify(body):undefined});
+// ===== Sync Google (Firebase Auth + Firestore) =====
+const FIREBASE_CONFIG={apiKey:"AIzaSyAst48Qjumjn2heLhHTm66Sx3qAyHxSa_Q",authDomain:"kantong-laut.firebaseapp.com",projectId:"kantong-laut",storageBucket:"kantong-laut.firebasestorage.app",messagingSenderId:"866417365408",appId:"1:866417365408:web:dc9ff60dc969e8ef5dd4c5"};
+let fbAuth=null,fbDb=null,fbUser=null,lastSt="",syncing=false,tmr=null;
+const fbOn=()=>!!(FIREBASE_CONFIG.apiKey&&FIREBASE_CONFIG.projectId);
+function uiAuth(){
+  const ready=fbOn()&&!!window.firebase;
+  $("ghst").textContent=!fbOn()?"Sync belum aktif (konfigurasi Firebase belum diisi).":!window.firebase?"Butuh internet untuk memuat sync Google.":!fbUser?"Belum masuk. Tap tombol di bawah.":(fbUser.email||"Tersambung")+" · "+(lastSt||"tersambung");
+  $("g_in").classList.toggle("hide",!ready||!!fbUser);
+  $("g_now").classList.toggle("hide",!fbUser);
+  $("g_out").classList.toggle("hide",!fbUser);
 }
-let syncing=false,tmr=null;
-function schedSync(){if(!gh.token)return;clearTimeout(tmr);tmr=setTimeout(()=>sync(),1500)}
-async function sync(retry){
-  if(!gh.token||!gh.repo||syncing)return;
+function cst(t){lastSt=t||"";$("cs").textContent=t?" · "+t:"";uiAuth()}
+function authMsg(e){
+  if(e.code==="auth/unauthorized-domain")return "Domain ini belum diizinkan di Firebase (Authentication → Settings → Authorized domains)";
+  if(e.code==="permission-denied")return "aturan Firestore belum benar";
+  return e.message||"gagal";
+}
+function fbInit(){
+  if(!fbOn()||!window.firebase)return;
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);fbAuth=firebase.auth();fbDb=firebase.firestore();
+    fbAuth.onAuthStateChanged(u=>{fbUser=u;uiAuth();if(u)sync()});
+    fbAuth.getRedirectResult().catch(e=>cst("⚠️ "+authMsg(e)));
+  }catch(e){cst("⚠️ "+authMsg(e))}
+}
+function schedSync(){if(!fbUser)return;clearTimeout(tmr);tmr=setTimeout(()=>sync(),1500)}
+async function sync(){
+  if(!fbUser||!fbDb||syncing)return;
   syncing=true;cst("⏳ sinkron...");
   try{
-    const r=await gapi("GET");let sha=null,remote=null;
-    if(r.ok){const j=await r.json();sha=j.sha;remote=JSON.parse(unb64(j.content))}
-    else if(r.status!==404)throw new Error(r.status===401?"token salah atau kedaluwarsa":r.status===403?"token tidak punya akses":"error "+r.status);
-    const before=canon(cur());
-    if(remote)merge(remote);
+    const ref=fbDb.collection("users").doc(fbUser.uid),before=canon(cur());
+    await fbDb.runTransaction(async tx=>{
+      const snap=await tx.get(ref),remote=snap.exists?JSON.parse(snap.data().payload):null;
+      if(remote)merge(remote);
+      if(!remote||canon(remote)!==canon(cur()))tx.set(ref,{payload:JSON.stringify({v:1,sts:meta.sts,data,budgets,set,deleted:meta.deleted}),updated:Date.now()});
+    });
     saveLocal();
     const changed=canon(cur())!==before;
-    if(!remote||canon(remote)!==canon(cur())){
-      const pr=await gapi("PUT",{message:"sync "+new Date().toISOString(),content:b64(JSON.stringify({v:1,sts:meta.sts,data,budgets,set,deleted:meta.deleted})),...(sha?{sha}:{})});
-      if(pr.status===409||pr.status===422){syncing=false;if(!retry)return sync(true);throw new Error("bentrok, coba sync lagi")}
-      if(!pr.ok)throw new Error(pr.status===404?"repo tidak ketemu atau token tanpa akses":"error "+pr.status);
-    }
     cst("☁️ tersinkron "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));
     if(changed){setupSet();render()}
-  }catch(e){cst("⚠️ "+(e.message||"gagal sync"))}
+  }catch(e){cst("⚠️ "+authMsg(e))}
   syncing=false;
 }
-$("g_repo").value=gh.repo||"";$("g_path").value=gh.path||"";if(gh.token)$("g_tok").placeholder="tersimpan ✓ (kosongkan kalau tidak diganti)";
-$("g_save").onclick=()=>{
-  const repo=$("g_repo").value.trim(),tok=$("g_tok").value.trim()||gh.token||"";
-  if(!/^[^\/\s]+\/[^\/\s]+$/.test(repo)||!tok){alert("Isi repo (format username/nama-repo) dan token dulu ya");return}
-  gh={repo,path:($("g_path").value.trim()||"kantong-laut.json").replace(/\s+/g,"-"),token:tok};
-  try{localStorage.setItem("kl_gh",JSON.stringify(gh))}catch(e){}
-  $("g_tok").value="";$("g_tok").placeholder="tersimpan ✓";sync();
+$("g_in").onclick=async()=>{
+  if(!fbAuth)return;
+  const pr=new firebase.auth.GoogleAuthProvider();
+  try{await fbAuth.signInWithPopup(pr)}
+  catch(e){
+    if(e.code==="auth/popup-blocked"||e.code==="auth/operation-not-supported-in-this-environment"){try{await fbAuth.signInWithRedirect(pr)}catch(e2){alert(authMsg(e2))}}
+    else if(e.code!=="auth/popup-closed-by-user"&&e.code!=="auth/cancelled-popup-request")alert(authMsg(e));
+  }
 };
 $("g_now").onclick=()=>sync();
-$("g_off").onclick=()=>{gh={};try{localStorage.removeItem("kl_gh")}catch(e){}$("g_tok").value="";$("g_tok").placeholder="github_pat_...";cst("")};
+$("g_out").onclick=()=>{if(fbAuth)fbAuth.signOut()};
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)sync()});
 window.addEventListener("online",()=>sync());
-cst("");sync();
+fbInit();uiAuth();
 </script>
 </body>
 </html>
